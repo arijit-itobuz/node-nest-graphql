@@ -1,0 +1,37 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Mutation {
+  signIn(signInInput: SignInInput!): String!
+  signUp(signUpInput: SignUpInput!): Response!
+  verify(verifyInput: VerifyInput!): String!
+  verifyLink(verifyLinkInput: SignUpInput!): Response!
+}
+
+type Query {
+  auth: String!
+}
+
+type Response {
+  environment: String!
+  message: String!
+}
+
+input SignInInput {
+  email: String!
+  password: String!
+}
+
+input SignUpInput {
+  dob: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  phoneNumber: String!
+}
+
+input VerifyInput {
+  token: String!
+}

@@ -11,8 +11,10 @@ export const config = {
   },
 
   jwt: {
-    auth_secret: process.env.JWT_AUTH_SECRET ?? '',
-    forgot_password_secret: process.env.JWT_FORGOT_PASSWORD_SECRET ?? '',
+    access_token_secret: process.env.JWT_ACCESS_TOKEN_SECRET ?? '',
+    refresh_token_secret: process.env.JWT_REFRESH_TOKEN_SECRET ?? '',
+    verify_token_secret: process.env.JWT_VERIFY_TOKEN_SECRET ?? '',
+    forgot_password_token_secret: process.env.JWT_FORGOT_PASSWORD_TOKEN_SECRET ?? '',
   },
 
   smtp: {
