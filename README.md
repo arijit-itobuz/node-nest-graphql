@@ -19,3 +19,7 @@
 - npx prisma migrate dev --name <migration_name>
 - npx prisma db push
 - npx prisma studio
+
+# Nest - usefull links
+
+- https://stackoverflow.com/questions/74548546/what-is-the-difference-between-inputtype-and-objecttype-in-nestjs

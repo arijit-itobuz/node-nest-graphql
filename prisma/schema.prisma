@@ -29,6 +29,7 @@ model User {
   refreshTokenHash String?
   verified         Boolean  @default(false)
   active           Boolean  @default(true)
+  twoFA            Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
