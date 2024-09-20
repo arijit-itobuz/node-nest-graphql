@@ -147,10 +147,8 @@ export class AuthService {
         throw new GraphQLError('Invalid User');
       }
 
-      const passwordCompare = await bcryptjs.compare(signInInput.password, user.passwordHash);
-
-      if (!passwordCompare) {
-        throw new GraphQLError('Invalid Credentials');
+      if (!user.active) {
+        throw new GraphQLError('Inactive User');
       }
 
       if (!user.verified) {
@@ -172,6 +170,12 @@ export class AuthService {
         } catch {
           throw new GraphQLError('User not verified, failed to send verification link');
         }
+      }
+
+      const passwordCompare = await bcryptjs.compare(signInInput.password, user.passwordHash);
+
+      if (!passwordCompare) {
+        throw new GraphQLError('Invalid Credentials');
       }
 
       if (user.mfa) {
