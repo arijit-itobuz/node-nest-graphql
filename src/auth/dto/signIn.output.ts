@@ -1,9 +1,14 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 import { Response } from 'src/common/dto/response.output';
 
 @ObjectType()
 export class SignInOutput extends Response {
+  @IsNotEmpty()
+  @IsBoolean()
+  @Field(() => Boolean)
+  proceedToMFA: boolean;
+
   @IsNotEmpty()
   @IsString()
   @Field(() => String)

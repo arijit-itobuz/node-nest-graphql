@@ -52,6 +52,7 @@ type SignInOutput {
   accessToken: String!
   environment: String!
   message: String!
+  proceedToMFA: Boolean!
   refreshToken: String!
   success: Boolean!
 }

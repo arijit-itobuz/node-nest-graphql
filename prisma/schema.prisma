@@ -16,6 +16,7 @@ datasource db {
 enum TokenType {
   VERIFY_TOKEN
   FORGET_PASSWORD_TOKEN
+  MFA_TOKEN
 }
 
 model User {
@@ -29,7 +30,7 @@ model User {
   refreshTokenHash String?
   verified         Boolean  @default(false)
   active           Boolean  @default(true)
-  twoFA            Boolean  @default(false)
+  mfa              Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -38,10 +39,12 @@ model User {
 
 model Token {
   id        String    @id @default(uuid())
-  token     String    @unique
+  email     String
+  token     String
   tokenType TokenType
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
+  @@unique([email, token])
   @@map("token")
 }

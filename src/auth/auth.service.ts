@@ -17,6 +17,7 @@ import { RefreshTokenOutput } from './dto/refreshToken.output';
 import { ForgotPasswordInput } from './dto/forgetPassword.input';
 import { ResetPasswordInput } from './dto/resetPassword.input';
 import { Exception } from 'src/common/error/exception';
+import { SignInMFAInput } from './dto/signInMFA.input';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +29,7 @@ export class AuthService {
 
   async signUp(signUpInput: SignUpInput): Promise<Response> {
     try {
-      const user = await this.prisma.user.findFirst({
+      const user = await this.prisma.user.findUnique({
         where: { email: signUpInput.email },
       });
 
@@ -47,6 +48,7 @@ export class AuthService {
         data: {
           token: verifyToken,
           tokenType: TokenType.VERIFY_TOKEN,
+          email: signUpInput.email,
         },
       });
 
@@ -71,7 +73,7 @@ export class AuthService {
 
   async verifyLink(verifyLinkInput: VerifyLinkInput): Promise<Response> {
     try {
-      const user = await this.prisma.user.findFirst({
+      const user = await this.prisma.user.findUnique({
         where: { email: verifyLinkInput.email },
       });
 
@@ -96,6 +98,7 @@ export class AuthService {
         data: {
           token: verifyToken,
           tokenType: TokenType.VERIFY_TOKEN,
+          email: verifyLinkInput.email,
         },
       });
 
@@ -111,8 +114,8 @@ export class AuthService {
 
       const email = decoded.email as string;
 
-      const token = await this.prisma.token.findFirst({
-        where: { token: verifyInput.token },
+      const token = await this.prisma.token.findUnique({
+        where: { email_token: { email: email, token: verifyInput.token } },
       });
 
       if (!token) {
@@ -125,7 +128,7 @@ export class AuthService {
       });
 
       await this.prisma.token.delete({
-        where: { token: verifyInput.token },
+        where: { email_token: { email: email, token: verifyInput.token } },
       });
 
       return { success: true, message: 'User verification success' };
@@ -136,7 +139,7 @@ export class AuthService {
 
   async signIn(signInInput: SignInInput): Promise<SignInOutput> {
     try {
-      const user = await this.prisma.user.findFirst({
+      const user = await this.prisma.user.findUnique({
         where: { email: signInInput.email },
       });
 
@@ -162,6 +165,7 @@ export class AuthService {
           return {
             success: false,
             message: 'User not verified, verification link sent',
+            proceedToMFA: false,
             accessToken: '',
             refreshToken: '',
           };
@@ -170,18 +174,69 @@ export class AuthService {
         }
       }
 
+      if (user.mfa) {
+        const mfaCode = String(Math.floor(100000 + Math.random() * 900000));
+
+        await this.prisma.token.create({
+          data: {
+            token: mfaCode,
+            tokenType: TokenType.MFA_TOKEN,
+            email: signInInput.email,
+          },
+        });
+
+        return {
+          success: true,
+          message: 'Proceed to MFA',
+          proceedToMFA: true,
+          accessToken: '',
+          refreshToken: '',
+        };
+      }
+
       const accessToken = this.jwtService.sign(
         { email: signInInput.email },
         { expiresIn: '1h', secret: config.jwt.access_token_secret }
       );
+
       const refreshToken = this.jwtService.sign(
         { email: signInInput.email },
         { expiresIn: '30d', secret: config.jwt.refresh_token_secret }
       );
 
-      return { success: true, message: 'SignIn success', accessToken, refreshToken };
+      return { success: true, message: 'SignIn success', proceedToMFA: false, accessToken, refreshToken };
     } catch (error) {
       Exception(error, 'SignIn failed');
+    }
+  }
+
+  async signInMFA(signInMFAInput: SignInMFAInput): Promise<SignInOutput> {
+    try {
+      const mfaToken = await this.prisma.token.findUnique({
+        where: { email_token: { email: signInMFAInput.email, token: signInMFAInput.token } },
+      });
+
+      if (!mfaToken) {
+        throw new GraphQLError('Invalid MFA token');
+      }
+
+      const accessToken = this.jwtService.sign(
+        { email: signInMFAInput.email },
+        { expiresIn: '1h', secret: config.jwt.access_token_secret }
+      );
+
+      const refreshToken = this.jwtService.sign(
+        { email: signInMFAInput.email },
+        { expiresIn: '30d', secret: config.jwt.refresh_token_secret }
+      );
+
+      await this.prisma.token.delete({
+        where: { email_token: { email: signInMFAInput.email, token: signInMFAInput.token } },
+      });
+
+      return { success: true, message: 'SignIn MFA success', proceedToMFA: false, accessToken, refreshToken };
+    } catch (error) {
+      Exception(error, 'Multifactor authenticaton failed');
     }
   }
 
@@ -192,6 +247,14 @@ export class AuthService {
       });
 
       const email = decoded.email as string;
+
+      const user = await this.prisma.user.findUnique({
+        where: { email: email },
+      });
+
+      if (!user) {
+        throw new GraphQLError('Invalid user');
+      }
 
       const accessToken = this.jwtService.sign(
         { email: email },
@@ -210,7 +273,7 @@ export class AuthService {
 
   async forgotPassword(forgotPasswordInput: ForgotPasswordInput): Promise<Response> {
     try {
-      const user = await this.prisma.user.findFirst({
+      const user = await this.prisma.user.findUnique({
         where: { email: forgotPasswordInput.email },
       });
 
@@ -233,6 +296,7 @@ export class AuthService {
         data: {
           token: forgetPasswordToken,
           tokenType: TokenType.FORGET_PASSWORD_TOKEN,
+          email: forgotPasswordInput.email,
         },
       });
 
@@ -250,8 +314,8 @@ export class AuthService {
 
       const email = decoded.email as string;
 
-      const token = await this.prisma.token.findFirst({
-        where: { token: resetPasswordInput.token },
+      const token = await this.prisma.token.findUnique({
+        where: { email_token: { email: email, token: resetPasswordInput.token } },
       });
 
       if (!token) {
@@ -269,6 +333,10 @@ export class AuthService {
       await this.prisma.user.update({
         where: { email },
         data: { passwordHash: newPasswordHash },
+      });
+
+      await this.prisma.token.delete({
+        where: { email_token: { email: email, token: resetPasswordInput.token } },
       });
 
       return { success: true, message: 'Reset password success' };
