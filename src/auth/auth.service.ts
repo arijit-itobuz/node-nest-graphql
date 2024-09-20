@@ -12,6 +12,11 @@ import { VerifyInput } from './dto/verify.input';
 import { VerifyLinkInput } from './dto/verifyLink.input';
 import { SignInInput } from './dto/signIn.input';
 import { SignInOutput } from './dto/signIn.output';
+import { RefreshTokenInput } from './dto/refreshToken.input';
+import { RefreshTokenOutput } from './dto/refreshToken.output';
+import { ForgotPasswordInput } from './dto/forgetPassword.input';
+import { ResetPasswordInput } from './dto/resetPassword.input';
+import { Exception } from 'src/common/error/exception';
 
 @Injectable()
 export class AuthService {
@@ -22,15 +27,15 @@ export class AuthService {
   ) {}
 
   async signUp(signUpInput: SignUpInput): Promise<Response> {
-    const user = await this.prisma.user.findFirst({
-      where: { email: signUpInput.email },
-    });
-
-    if (user) {
-      throw new GraphQLError('Email already in use');
-    }
-
     try {
+      const user = await this.prisma.user.findFirst({
+        where: { email: signUpInput.email },
+      });
+
+      if (user) {
+        throw new GraphQLError('Email already in use');
+      }
+
       const verifyToken = this.jwtService.sign(
         { email: signUpInput.email },
         { expiresIn: '10m', secret: config.jwt.verify_token_secret }
@@ -41,7 +46,7 @@ export class AuthService {
       await this.prisma.token.create({
         data: {
           token: verifyToken,
-          tokenType: TokenType.SIGNUP_VERIFY_TOKEN,
+          tokenType: TokenType.VERIFY_TOKEN,
         },
       });
 
@@ -58,28 +63,28 @@ export class AuthService {
         },
       });
 
-      return { message: 'SignUp success, proceed to verification' };
-    } catch {
-      throw new GraphQLError('SignUp failed');
+      return { success: true, message: 'SignUp success, proceed to verification' };
+    } catch (error) {
+      Exception(error, 'SignUp failed');
     }
   }
 
   async verifyLink(verifyLinkInput: VerifyLinkInput): Promise<Response> {
-    const user = await this.prisma.user.findFirst({
-      where: { email: verifyLinkInput.email },
-    });
-
-    if (!user) {
-      throw new GraphQLError('Invalid User');
-    }
-
-    const passwordCompare = await bcryptjs.compare(verifyLinkInput.password, user.passwordHash);
-
-    if (!passwordCompare) {
-      throw new GraphQLError('Invalid Credentials');
-    }
-
     try {
+      const user = await this.prisma.user.findFirst({
+        where: { email: verifyLinkInput.email },
+      });
+
+      if (!user) {
+        throw new GraphQLError('Invalid User');
+      }
+
+      const passwordCompare = await bcryptjs.compare(verifyLinkInput.password, user.passwordHash);
+
+      if (!passwordCompare) {
+        throw new GraphQLError('Invalid Credentials');
+      }
+
       const verifyToken = this.jwtService.sign(
         { email: verifyLinkInput.email },
         { expiresIn: '10m', secret: config.jwt.verify_token_secret }
@@ -87,9 +92,16 @@ export class AuthService {
 
       await this.mailService.send_email('User Verification Link', `token: ${verifyToken}`, verifyLinkInput.email);
 
-      return { message: 'Verification link sent, proceed to verification' };
-    } catch {
-      throw new GraphQLError('Failed to send verification link');
+      await this.prisma.token.create({
+        data: {
+          token: verifyToken,
+          tokenType: TokenType.VERIFY_TOKEN,
+        },
+      });
+
+      return { success: true, message: 'Verification link sent, proceed to verification' };
+    } catch (error) {
+      Exception(error, 'Faield to send verification mail');
     }
   }
 
@@ -99,18 +111,30 @@ export class AuthService {
 
       const email = decoded.email as string;
 
+      const token = await this.prisma.token.findFirst({
+        where: { token: verifyInput.token },
+      });
+
+      if (!token) {
+        throw new GraphQLError('Token Expired');
+      }
+
       await this.prisma.user.update({
         where: { email: email },
         data: { verified: true },
       });
 
-      return { message: 'User verification success' };
-    } catch {
-      throw new GraphQLError('User verification failed');
+      await this.prisma.token.delete({
+        where: { token: verifyInput.token },
+      });
+
+      return { success: true, message: 'User verification success' };
+    } catch (error) {
+      Exception(error, 'User verification failed');
     }
   }
 
-  async signIn(signInInput: SignInInput): Promise<SignInOutput | Response> {
+  async signIn(signInInput: SignInInput): Promise<SignInOutput> {
     try {
       const user = await this.prisma.user.findFirst({
         where: { email: signInInput.email },
@@ -135,7 +159,12 @@ export class AuthService {
 
           await this.mailService.send_email('User Verification Link', `token: ${verifyToken}`, signInInput.email);
 
-          return { message: 'User not verified, verification link sent' };
+          return {
+            success: false,
+            message: 'User not verified, verification link sent',
+            accessToken: '',
+            refreshToken: '',
+          };
         } catch {
           throw new GraphQLError('User not verified, failed to send verification link');
         }
@@ -150,9 +179,101 @@ export class AuthService {
         { expiresIn: '30d', secret: config.jwt.refresh_token_secret }
       );
 
-      return { message: 'SignIn success', accessToken, refreshToken };
-    } catch {
-      throw new GraphQLError('SignIn failed');
+      return { success: true, message: 'SignIn success', accessToken, refreshToken };
+    } catch (error) {
+      Exception(error, 'SignIn failed');
+    }
+  }
+
+  async refreshToken(refreshTokenInput: RefreshTokenInput): Promise<RefreshTokenOutput> {
+    try {
+      const decoded = this.jwtService.verify(refreshTokenInput.refreshToken, {
+        secret: config.jwt.refresh_token_secret,
+      });
+
+      const email = decoded.email as string;
+
+      const accessToken = this.jwtService.sign(
+        { email: email },
+        { expiresIn: '1h', secret: config.jwt.access_token_secret }
+      );
+      const refreshToken = this.jwtService.sign(
+        { email: email },
+        { expiresIn: '30d', secret: config.jwt.refresh_token_secret }
+      );
+
+      return { success: true, message: 'Refresh and Access tokens generated', accessToken, refreshToken };
+    } catch (error) {
+      Exception(error, 'Failed to generate refresh and access token');
+    }
+  }
+
+  async forgotPassword(forgotPasswordInput: ForgotPasswordInput): Promise<Response> {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: { email: forgotPasswordInput.email },
+      });
+
+      if (!user) {
+        throw new GraphQLError('Invalid User');
+      }
+
+      const forgetPasswordToken = this.jwtService.sign(
+        { email: forgotPasswordInput.email },
+        { expiresIn: '10m', secret: config.jwt.forgot_password_token_secret }
+      );
+
+      await this.mailService.send_email(
+        'Forget Password Link',
+        `token: ${forgetPasswordToken}`,
+        forgotPasswordInput.email
+      );
+
+      await this.prisma.token.create({
+        data: {
+          token: forgetPasswordToken,
+          tokenType: TokenType.FORGET_PASSWORD_TOKEN,
+        },
+      });
+
+      return { success: true, message: 'Forgot password mail sent' };
+    } catch (error) {
+      Exception(error, 'Failed to sent forgot password mail');
+    }
+  }
+
+  async resetPassword(resetPasswordInput: ResetPasswordInput): Promise<Response> {
+    try {
+      const decoded = this.jwtService.verify(resetPasswordInput.token, {
+        secret: config.jwt.forgot_password_token_secret,
+      });
+
+      const email = decoded.email as string;
+
+      const token = await this.prisma.token.findFirst({
+        where: { token: resetPasswordInput.token },
+      });
+
+      if (!token) {
+        throw new GraphQLError('Token Expired');
+      }
+
+      const user = await this.prisma.user.findFirst({ where: { email } });
+
+      if (!user) {
+        throw new GraphQLError('Invalid User');
+      }
+
+      const newPasswordHash = await bcryptjs.hash(resetPasswordInput.newPassword, 10);
+
+      await this.prisma.user.update({
+        where: { email },
+        data: { passwordHash: newPasswordHash },
+      });
+
+      return { success: true, message: 'Reset password success' };
+    } catch (error) {
+      Exception(error, 'Reset password failed');
     }
   }
 }

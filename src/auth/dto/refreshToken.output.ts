@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { Response } from 'src/common/dto/response.output';
 
 @ObjectType()
-export class SignInOutput extends Response {
+export class RefreshTokenOutput extends Response {
   @IsNotEmpty()
   @IsString()
   @Field(() => String)

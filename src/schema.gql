@@ -2,25 +2,58 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ForgotPasswordInput {
+  email: String!
+}
+
 type Mutation {
-  signIn(signInInput: SignInInput!): String!
+  forgotPassword(forgotPasswordInput: ForgotPasswordInput!): Response!
+  refreshToken(refreshTokenInput: RefreshTokenInput!): RefreshTokenOutput!
+  resetPassword(resetPasswordInput: ResetPasswordInput!): Response!
+  signIn(signInInput: SignInInput!): SignInOutput!
   signUp(signUpInput: SignUpInput!): Response!
-  verify(verifyInput: VerifyInput!): String!
-  verifyLink(verifyLinkInput: SignUpInput!): Response!
+  verify(verifyInput: VerifyInput!): Response!
+  verifyLink(verifyLinkInput: VerifyLinkInput!): Response!
 }
 
 type Query {
   auth: String!
 }
 
+input RefreshTokenInput {
+  refreshToken: String!
+}
+
+type RefreshTokenOutput {
+  accessToken: String!
+  environment: String!
+  message: String!
+  refreshToken: String!
+  success: Boolean!
+}
+
+input ResetPasswordInput {
+  newPassword: String!
+  token: String!
+}
+
 type Response {
   environment: String!
   message: String!
+  success: Boolean!
 }
 
 input SignInInput {
   email: String!
   password: String!
+}
+
+type SignInOutput {
+  accessToken: String!
+  environment: String!
+  message: String!
+  refreshToken: String!
+  success: Boolean!
 }
 
 input SignUpInput {
@@ -34,4 +67,9 @@ input SignUpInput {
 
 input VerifyInput {
   token: String!
+}
+
+input VerifyLinkInput {
+  email: String!
+  password: String!
 }

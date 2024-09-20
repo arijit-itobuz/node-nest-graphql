@@ -14,7 +14,7 @@ datasource db {
 }
 
 enum TokenType {
-  SIGNUP_VERIFY_TOKEN
+  VERIFY_TOKEN
   FORGET_PASSWORD_TOKEN
 }
 
@@ -28,6 +28,7 @@ model User {
   passwordHash     String
   refreshTokenHash String?
   verified         Boolean  @default(false)
+  active           Boolean  @default(true)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -36,7 +37,7 @@ model User {
 
 model Token {
   id        String    @id @default(uuid())
-  token     String
+  token     String    @unique
   tokenType TokenType
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

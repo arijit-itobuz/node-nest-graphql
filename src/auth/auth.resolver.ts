@@ -5,6 +5,11 @@ import { Response } from 'src/common/dto/response.output';
 import { VerifyInput } from './dto/verify.input';
 import { SignInInput } from './dto/signIn.input';
 import { SignInOutput } from './dto/signIn.output';
+import { RefreshTokenInput } from './dto/refreshToken.input';
+import { RefreshTokenOutput } from './dto/refreshToken.output';
+import { ForgotPasswordInput } from './dto/forgetPassword.input';
+import { VerifyLinkInput } from './dto/verifyLink.input';
+import { ResetPasswordInput } from './dto/resetPassword.input';
 
 @Resolver()
 export class AuthResolver {
@@ -21,17 +26,32 @@ export class AuthResolver {
   }
 
   @Mutation(() => Response)
-  async verifyLink(@Args('verifyLinkInput') verifyLinkInput: SignUpInput): Promise<Response> {
-    return await this.authService.signUp(verifyLinkInput);
+  async verifyLink(@Args('verifyLinkInput') verifyLinkInput: VerifyLinkInput): Promise<Response> {
+    return await this.authService.verifyLink(verifyLinkInput);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Response)
   async verify(@Args('verifyInput') verifyInput: VerifyInput): Promise<Response> {
     return this.authService.verify(verifyInput);
   }
 
-  @Mutation(() => String)
-  async signIn(@Args('signInInput') signInInput: SignInInput): Promise<SignInOutput | Response> {
+  @Mutation(() => SignInOutput)
+  async signIn(@Args('signInInput') signInInput: SignInInput): Promise<SignInOutput> {
     return this.authService.signIn(signInInput);
+  }
+
+  @Mutation(() => RefreshTokenOutput)
+  async refreshToken(@Args('refreshTokenInput') refreshTokenInput: RefreshTokenInput): Promise<RefreshTokenOutput> {
+    return this.authService.refreshToken(refreshTokenInput);
+  }
+
+  @Mutation(() => Response)
+  async forgotPassword(@Args('forgotPasswordInput') forgotPasswordInput: ForgotPasswordInput): Promise<Response> {
+    return this.authService.forgotPassword(forgotPasswordInput);
+  }
+
+  @Mutation(() => Response)
+  async resetPassword(@Args('resetPasswordInput') resetPasswordInput: ResetPasswordInput): Promise<Response> {
+    return this.authService.resetPassword(resetPasswordInput);
   }
 }

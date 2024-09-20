@@ -17,4 +17,5 @@
 
 - npx prisma generate
 - npx prisma migrate dev --name <migration_name>
+- npx prisma db push
 - npx prisma studio
