@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "TokenType" AS ENUM ('VERIFY_TOKEN', 'FORGET_PASSWORD_TOKEN');
+CREATE TYPE "TokenType" AS ENUM ('VERIFY_TOKEN', 'FORGET_PASSWORD_TOKEN', 'MFA_TOKEN');
 
 -- CreateTable
 CREATE TABLE "user" (
@@ -13,7 +13,7 @@ CREATE TABLE "user" (
     "refreshTokenHash" TEXT,
     "verified" BOOLEAN NOT NULL DEFAULT false,
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "twoFA" BOOLEAN NOT NULL DEFAULT false,
+    "mfa" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -23,6 +23,7 @@ CREATE TABLE "user" (
 -- CreateTable
 CREATE TABLE "token" (
     "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "tokenType" "TokenType" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -35,4 +36,4 @@ CREATE TABLE "token" (
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "token_token_key" ON "token"("token");
+CREATE UNIQUE INDEX "token_email_token_key" ON "token"("email", "token");

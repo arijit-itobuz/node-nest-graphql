@@ -10,6 +10,7 @@ import { RefreshTokenOutput } from './dto/refreshToken.output';
 import { ForgotPasswordInput } from './dto/forgetPassword.input';
 import { VerifyLinkInput } from './dto/verifyLink.input';
 import { ResetPasswordInput } from './dto/resetPassword.input';
+import { SignInMFAInput } from './dto/signInMFA.input';
 
 @Resolver()
 export class AuthResolver {
@@ -40,6 +41,10 @@ export class AuthResolver {
     return this.authService.signIn(signInInput);
   }
 
+  @Mutation(() => SignInOutput)
+  async signInMFA(@Args('signInMFAInput') signInMFAInput: SignInMFAInput): Promise<SignInOutput> {
+    return this.authService.signInMFA(signInMFAInput);
+  }
   @Mutation(() => RefreshTokenOutput)
   async refreshToken(@Args('refreshTokenInput') refreshTokenInput: RefreshTokenInput): Promise<RefreshTokenOutput> {
     return this.authService.refreshToken(refreshTokenInput);

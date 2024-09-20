@@ -177,6 +177,8 @@ export class AuthService {
       if (user.mfa) {
         const mfaCode = String(Math.floor(100000 + Math.random() * 900000));
 
+        await this.mailService.send_email('MFA Login Code', `MFA Code: ${mfaCode}`, signInInput.email);
+
         await this.prisma.token.create({
           data: {
             token: mfaCode,
