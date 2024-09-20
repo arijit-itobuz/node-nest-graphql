@@ -18,6 +18,7 @@ import { ForgotPasswordInput } from './dto/forgetPassword.input';
 import { ResetPasswordInput } from './dto/resetPassword.input';
 import { Exception } from 'src/common/error/exception';
 import { SignInMFAInput } from './dto/signInMFA.input';
+import { differenceInMinutes } from 'date-fns';
 
 @Injectable()
 export class AuthService {
@@ -114,11 +115,15 @@ export class AuthService {
 
       const email = decoded.email as string;
 
-      const token = await this.prisma.token.findUnique({
+      const verifyToken = await this.prisma.token.findUnique({
         where: { email_token: { email: email, token: verifyInput.token } },
       });
 
-      if (!token) {
+      if (!verifyToken) {
+        throw new GraphQLError('Invalid Token');
+      }
+
+      if (differenceInMinutes(new Date(), verifyToken.createdAt) > 10) {
         throw new GraphQLError('Token Expired');
       }
 
@@ -226,6 +231,10 @@ export class AuthService {
         throw new GraphQLError('Invalid MFA token');
       }
 
+      if (differenceInMinutes(new Date(), mfaToken.createdAt) > 10) {
+        throw new GraphQLError('Token Expired');
+      }
+
       const accessToken = this.jwtService.sign(
         { email: signInMFAInput.email },
         { expiresIn: '1h', secret: config.jwt.access_token_secret }
@@ -259,7 +268,15 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new GraphQLError('Invalid user');
+        throw new GraphQLError('Invalid User');
+      }
+
+      if (!user.verified) {
+        throw new GraphQLError('User not verified');
+      }
+
+      if (!user.active) {
+        throw new GraphQLError('Inactive User');
       }
 
       const accessToken = this.jwtService.sign(
@@ -320,11 +337,15 @@ export class AuthService {
 
       const email = decoded.email as string;
 
-      const token = await this.prisma.token.findUnique({
+      const forgotPasswordToken = await this.prisma.token.findUnique({
         where: { email_token: { email: email, token: resetPasswordInput.token } },
       });
 
-      if (!token) {
+      if (!forgotPasswordToken) {
+        throw new GraphQLError('Invalid Token');
+      }
+
+      if (differenceInMinutes(new Date(), forgotPasswordToken.createdAt) > 10) {
         throw new GraphQLError('Token Expired');
       }
 
