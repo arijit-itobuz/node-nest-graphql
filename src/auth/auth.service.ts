@@ -431,7 +431,7 @@ export class AuthService {
         throw new GraphQLError('Invalid User');
       }
 
-      const newPasswordHash = await bcryptjs.hash(resetPasswordInput.newPassword, 10);
+      const newPasswordHash = await bcryptjs.hash(resetPasswordInput.newPassword, config.auth.passwordHashSalt);
 
       await this.prisma.user.update({
         where: { email },
