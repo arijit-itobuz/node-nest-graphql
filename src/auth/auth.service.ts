@@ -5,7 +5,7 @@ import { GraphQLError } from 'graphql';
 import { JwtService } from '@nestjs/jwt';
 import * as bcryptjs from 'bcryptjs';
 import { Response } from 'src/common/dto/response.output';
-import { config } from 'src/configs/config';
+import { config } from 'src/config/config';
 import { MailService } from 'src/mail/mail.service';
 import { TokenType } from '@prisma/client';
 import { VerifyInput } from './dto/verify.input';

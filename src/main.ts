@@ -1,12 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { config } from './configs/config';
+import { config } from './config/config';
 import { ValidationPipe } from '@nestjs/common';
+import { GlobalExceptionFilter } from './common/error/globalException.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   await app.listen(config.app.port);
 
