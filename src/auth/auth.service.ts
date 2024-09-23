@@ -281,7 +281,7 @@ export class AuthService {
           data: { failedLoginCount: ++user.failedLoginCount },
         });
 
-        if (res.failedLoginCount === 3) {
+        if (res.failedLoginCount === config.auth.failedLoginCount) {
           await this.prisma.user.update({
             where: { email: signInMFAInput.email },
             data: { accountLockedAt: new Date() },
