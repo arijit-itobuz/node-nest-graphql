@@ -53,7 +53,7 @@ export class AuthService {
         },
       });
 
-      const passwordHash = await bcryptjs.hash(signUpInput.password, 10);
+      const passwordHash = await bcryptjs.hash(signUpInput.password, config.auth.passwordHashSalt);
 
       await this.prisma.user.create({
         data: {
@@ -90,7 +90,7 @@ export class AuthService {
 
       const verifyToken = this.jwtService.sign(
         { email: verifyLinkInput.email },
-        { expiresIn: '10m', secret: config.jwt.verify_token_secret }
+        { expiresIn: config.auth.verifyTokenExpiryTimeInMins, secret: config.jwt.verify_token_secret }
       );
 
       await this.mailService.send_email('User Verification Link', `token: ${verifyToken}`, verifyLinkInput.email);
@@ -123,7 +123,7 @@ export class AuthService {
         throw new GraphQLError('Invalid Token');
       }
 
-      if (differenceInMinutes(new Date(), verifyToken.createdAt) > 10) {
+      if (differenceInMinutes(new Date(), verifyToken.createdAt) > config.auth.verifyTokenExpiryNumber) {
         throw new GraphQLError('Token Expired');
       }
 
@@ -160,7 +160,7 @@ export class AuthService {
         try {
           const verifyToken = this.jwtService.sign(
             { email: signInInput.email },
-            { expiresIn: '10m', secret: config.jwt.verify_token_secret }
+            { expiresIn: config.auth.verifyTokenExpiryTimeInMins, secret: config.jwt.verify_token_secret }
           );
 
           await this.mailService.send_email('User Verification Link', `token: ${verifyToken}`, signInInput.email);
@@ -169,11 +169,27 @@ export class AuthService {
             success: false,
             message: 'User not verified, verification link sent',
             proceedToMFA: false,
+            redirectToSignIn: false,
             accessToken: '',
             refreshToken: '',
           };
         } catch {
           throw new GraphQLError('User not verified, failed to send verification link');
+        }
+      }
+
+      if (user.accountLockedAt) {
+        const accountLockedDelta = differenceInMinutes(new Date(), user.accountLockedAt);
+
+        if (accountLockedDelta < config.auth.accountLockedTimeInMins) {
+          return {
+            success: false,
+            message: `Account locked temporarily, try after ${config.auth.accountLockedTimeInMins - accountLockedDelta}mins`,
+            proceedToMFA: false,
+            redirectToSignIn: false,
+            accessToken: '',
+            refreshToken: '',
+          };
         }
       }
 
@@ -200,6 +216,7 @@ export class AuthService {
           success: true,
           message: 'Proceed to MFA',
           proceedToMFA: true,
+          redirectToSignIn: false,
           accessToken: '',
           refreshToken: '',
         };
@@ -207,15 +224,22 @@ export class AuthService {
 
       const accessToken = this.jwtService.sign(
         { email: signInInput.email },
-        { expiresIn: '1h', secret: config.jwt.access_token_secret }
+        { expiresIn: config.auth.accessTokenExpiryTimeInHrs, secret: config.jwt.access_token_secret }
       );
 
       const refreshToken = this.jwtService.sign(
         { email: signInInput.email },
-        { expiresIn: '30d', secret: config.jwt.refresh_token_secret }
+        { expiresIn: config.auth.refreshTokenExpiryTimeInDays, secret: config.jwt.refresh_token_secret }
       );
 
-      return { success: true, message: 'SignIn success', proceedToMFA: false, accessToken, refreshToken };
+      return {
+        success: true,
+        message: 'SignIn success',
+        proceedToMFA: false,
+        redirectToSignIn: false,
+        accessToken,
+        refreshToken,
+      };
     } catch (error) {
       Exception(error, 'SignIn failed');
     }
@@ -227,29 +251,79 @@ export class AuthService {
         where: { email_token: { email: signInMFAInput.email, token: signInMFAInput.token } },
       });
 
-      if (!mfaToken) {
-        throw new GraphQLError('Invalid MFA token');
+      let user = await this.prisma.user.findUnique({
+        where: { email: signInMFAInput.email },
+      });
+
+      if (user.accountLockedAt) {
+        const accountLockedDelta = differenceInMinutes(new Date(), user.accountLockedAt);
+
+        if (accountLockedDelta < config.auth.accountLockedTimeInMins) {
+          return {
+            success: false,
+            message: `Account locked temporarily, try after ${config.auth.accountLockedTimeInMins - accountLockedDelta}mins`,
+            proceedToMFA: false,
+            redirectToSignIn: true,
+            accessToken: '',
+            refreshToken: '',
+          };
+        } else {
+          user = await this.prisma.user.update({
+            where: { email: signInMFAInput.email },
+            data: { accountLockedAt: null, failedLoginCount: 0 },
+          });
+        }
       }
 
-      if (differenceInMinutes(new Date(), mfaToken.createdAt) > 10) {
-        throw new GraphQLError('Token Expired');
+      if (!mfaToken) {
+        const res = await this.prisma.user.update({
+          where: { email: signInMFAInput.email },
+          data: { failedLoginCount: ++user.failedLoginCount },
+        });
+
+        if (res.failedLoginCount === 3) {
+          await this.prisma.user.update({
+            where: { email: signInMFAInput.email },
+            data: { accountLockedAt: new Date() },
+          });
+        }
+
+        throw new GraphQLError('Invalid MFA token, try again');
+      }
+
+      if (differenceInMinutes(new Date(), mfaToken.createdAt) > config.auth.mfaTokenExpiryNumber) {
+        return {
+          success: false,
+          message: 'Token Expired',
+          proceedToMFA: false,
+          redirectToSignIn: true,
+          accessToken: '',
+          refreshToken: '',
+        };
       }
 
       const accessToken = this.jwtService.sign(
         { email: signInMFAInput.email },
-        { expiresIn: '1h', secret: config.jwt.access_token_secret }
+        { expiresIn: config.auth.accessTokenExpiryTimeInHrs, secret: config.jwt.access_token_secret }
       );
 
       const refreshToken = this.jwtService.sign(
         { email: signInMFAInput.email },
-        { expiresIn: '30d', secret: config.jwt.refresh_token_secret }
+        { expiresIn: config.auth.refreshTokenExpiryTimeInDays, secret: config.jwt.refresh_token_secret }
       );
 
       await this.prisma.token.delete({
         where: { email_token: { email: signInMFAInput.email, token: signInMFAInput.token } },
       });
 
-      return { success: true, message: 'SignIn MFA success', proceedToMFA: false, accessToken, refreshToken };
+      return {
+        success: true,
+        message: 'SignIn MFA success',
+        proceedToMFA: false,
+        redirectToSignIn: false,
+        accessToken,
+        refreshToken,
+      };
     } catch (error) {
       Exception(error, 'Multifactor authenticaton failed');
     }
@@ -281,11 +355,11 @@ export class AuthService {
 
       const accessToken = this.jwtService.sign(
         { email: email },
-        { expiresIn: '1h', secret: config.jwt.access_token_secret }
+        { expiresIn: config.auth.accessTokenExpiryTimeInHrs, secret: config.jwt.access_token_secret }
       );
       const refreshToken = this.jwtService.sign(
         { email: email },
-        { expiresIn: '30d', secret: config.jwt.refresh_token_secret }
+        { expiresIn: config.auth.refreshTokenExpiryTimeInDays, secret: config.jwt.refresh_token_secret }
       );
 
       return { success: true, message: 'Refresh and Access tokens generated', accessToken, refreshToken };
@@ -306,7 +380,7 @@ export class AuthService {
 
       const forgetPasswordToken = this.jwtService.sign(
         { email: forgotPasswordInput.email },
-        { expiresIn: '10m', secret: config.jwt.forgot_password_token_secret }
+        { expiresIn: config.auth.forgotPasswordTokenExpiryTimeInMins, secret: config.jwt.forgot_password_token_secret }
       );
 
       await this.mailService.send_email(
@@ -345,7 +419,9 @@ export class AuthService {
         throw new GraphQLError('Invalid Token');
       }
 
-      if (differenceInMinutes(new Date(), forgotPasswordToken.createdAt) > 10) {
+      if (
+        differenceInMinutes(new Date(), forgotPasswordToken.createdAt) > config.auth.forgotPasswordTokenExpiryNumber
+      ) {
         throw new GraphQLError('Token Expired');
       }
 

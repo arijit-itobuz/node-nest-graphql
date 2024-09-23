@@ -20,19 +20,21 @@ enum TokenType {
 }
 
 model User {
-  id               String   @id @default(uuid())
+  id               String    @id @default(uuid())
   firstName        String
   lastName         String
-  email            String   @unique
+  email            String    @unique
   dob              String
   phoneNumber      String
   passwordHash     String
   refreshTokenHash String?
-  verified         Boolean  @default(false)
-  active           Boolean  @default(true)
-  mfa              Boolean  @default(false)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  verified         Boolean   @default(false)
+  active           Boolean   @default(true)
+  mfa              Boolean   @default(false)
+  failedLoginCount Int       @default(0)
+  accountLockedAt  DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   @@map("user")
 }

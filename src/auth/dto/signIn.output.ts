@@ -10,6 +10,11 @@ export class SignInOutput extends Response {
   proceedToMFA: boolean;
 
   @IsNotEmpty()
+  @IsBoolean()
+  @Field(() => Boolean)
+  redirectToSignIn: boolean;
+
+  @IsNotEmpty()
   @IsString()
   @Field(() => String)
   accessToken: string;

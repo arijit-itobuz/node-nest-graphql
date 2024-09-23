@@ -27,4 +27,19 @@ export const config = {
   email: {
     from: process.env.EMAIL_FROM ?? '',
   },
+
+  auth: {
+    passwordHashSalt: 10,
+    failedLoginCount: 5,
+    accountLockedTimeInMins: 15,
+
+    mfaTokenExpiryNumber: 10,
+    verifyTokenExpiryNumber: 10,
+    forgotPasswordTokenExpiryNumber: 10,
+
+    verifyTokenExpiryTimeInMins: '10m',
+    forgotPasswordTokenExpiryTimeInMins: '10m',
+    accessTokenExpiryTimeInHrs: '1h',
+    refreshTokenExpiryTimeInDays: '30d',
+  },
 };
