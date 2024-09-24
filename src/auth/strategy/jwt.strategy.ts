@@ -4,6 +4,7 @@ import { GraphQLError } from 'graphql';
 import * as httpStatus from 'http-status';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Exception } from 'src/common/error/exception';
+import { IJwtPayload } from 'src/common/interface/jwtInterface.payload';
 import { config } from 'src/config/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -17,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
+  async validate(payload: IJwtPayload) {
     try {
       const email = payload.email;
       const user = await this.prisma.user.findUnique({

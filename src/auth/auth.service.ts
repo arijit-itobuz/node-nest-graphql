@@ -19,6 +19,7 @@ import { ResetPasswordInput } from './dto/resetPassword.input';
 import { Exception } from 'src/common/error/exception';
 import { SignInMFAInput } from './dto/signInMFA.input';
 import { differenceInMinutes } from 'date-fns';
+import { IJwtPayload } from 'src/common/interface/jwtInterface.payload';
 
 @Injectable()
 export class AuthService {
@@ -111,9 +112,11 @@ export class AuthService {
 
   async verify(verifyInput: VerifyInput): Promise<Response> {
     try {
-      const decoded = this.jwtService.verify(verifyInput.token, { secret: config.jwt.verify_token_secret });
+      const decoded: IJwtPayload = this.jwtService.verify(verifyInput.token, {
+        secret: config.jwt.verify_token_secret,
+      });
 
-      const email = decoded.email as string;
+      const email = decoded.email;
 
       const verifyToken = await this.prisma.token.findUnique({
         where: { email_token: { email: email, token: verifyInput.token } },
@@ -331,11 +334,11 @@ export class AuthService {
 
   async refreshToken(refreshTokenInput: RefreshTokenInput): Promise<RefreshTokenOutput> {
     try {
-      const decoded = this.jwtService.verify(refreshTokenInput.refreshToken, {
+      const decoded: IJwtPayload = this.jwtService.verify(refreshTokenInput.refreshToken, {
         secret: config.jwt.refresh_token_secret,
       });
 
-      const email = decoded.email as string;
+      const email = decoded.email;
 
       const user = await this.prisma.user.findUnique({
         where: { email: email },
@@ -405,11 +408,11 @@ export class AuthService {
 
   async resetPassword(resetPasswordInput: ResetPasswordInput): Promise<Response> {
     try {
-      const decoded = this.jwtService.verify(resetPasswordInput.token, {
+      const decoded: IJwtPayload = this.jwtService.verify(resetPasswordInput.token, {
         secret: config.jwt.forgot_password_token_secret,
       });
 
-      const email = decoded.email as string;
+      const email = decoded.email;
 
       const forgotPasswordToken = await this.prisma.token.findUnique({
         where: { email_token: { email: email, token: resetPasswordInput.token } },

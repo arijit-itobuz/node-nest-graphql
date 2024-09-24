@@ -23,7 +23,7 @@ export class AuthResolver {
   @UseGuards(JwtGuard)
   async auth(@Context() context: any, @User() user: any): Promise<any> {
     console.log({ user });
-    return JSON.stringify({ contextUser: context.req.user, decoratorUser: user });
+    return 'auth';
   }
 
   @Mutation(() => Response)
