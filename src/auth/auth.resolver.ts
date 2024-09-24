@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { SignUpInput } from './dto/signUp.input';
 import { Response } from 'src/common/dto/response.output';
@@ -11,14 +11,19 @@ import { ForgotPasswordInput } from './dto/forgetPassword.input';
 import { VerifyLinkInput } from './dto/verifyLink.input';
 import { ResetPasswordInput } from './dto/resetPassword.input';
 import { SignInMFAInput } from './dto/signInMFA.input';
+import { UseGuards } from '@nestjs/common';
+import { JwtGuard } from './guard/jwt.guard';
+import { User } from './decorator/user.decorator';
 
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Query(() => String)
-  async auth(): Promise<string> {
-    return 'Hello, Auth!';
+  @UseGuards(JwtGuard)
+  async auth(@Context() context: any, @User() user: any): Promise<any> {
+    console.log({ user });
+    return JSON.stringify({ contextUser: context.req.user, decoratorUser: user });
   }
 
   @Mutation(() => Response)

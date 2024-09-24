@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { config } from 'src/configs/config';
+import { config } from 'src/config/config';
 
 @ObjectType()
 export class Response {
