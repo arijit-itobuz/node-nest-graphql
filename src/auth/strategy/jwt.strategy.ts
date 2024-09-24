@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { GraphQLError } from 'graphql';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Exception } from 'src/common/error/exception';
-import { IJwtPayload } from 'src/common/interface/jwtInterface.payload';
+import { IJwtPayload } from 'src/common/interface/jwtPayload.interface';
 import { config } from 'src/config/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 

@@ -19,7 +19,7 @@ import { ResetPasswordInput } from './dto/resetPassword.input';
 import { Exception } from 'src/common/error/exception';
 import { SignInMFAInput } from './dto/signInMFA.input';
 import { differenceInMinutes } from 'date-fns';
-import { IJwtPayload } from 'src/common/interface/jwtInterface.payload';
+import { IJwtPayload } from 'src/common/interface/jwtPayload.interface';
 
 @Injectable()
 export class AuthService {
