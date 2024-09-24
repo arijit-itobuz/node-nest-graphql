@@ -13,21 +13,27 @@ import { ResetPasswordInput } from './dto/resetPassword.input';
 import { SignInMFAInput } from './dto/signInMFA.input';
 import { UseGuards } from '@nestjs/common';
 import { JwtGuard } from './guard/jwt.guard';
-import { User } from './decorator/user.decorator';
+import { GetUser } from './decorator/getUser.decorator';
 import { Roles } from './decorator/roles.decorator';
-import { Role } from '@prisma/client';
+import { PrivilegeType, Role, User } from '@prisma/client';
 import { RolesGuard } from './guard/roles.guard';
+import { PrivilegesGuard } from './guard/privileges.guard';
+import { Privileges } from './decorator/privileges.decorator';
 
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Query(() => String)
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-  async auth(@Context() context: any, @User() user: any): Promise<any> {
-    console.log({ user });
-    return 'auth';
+  @UseGuards(JwtGuard, RolesGuard, PrivilegesGuard)
+  @Roles(Role.USER)
+  @Privileges(PrivilegeType.PROFILE_READ)
+  async auth(@Context() context: any, @GetUser() user: User): Promise<any> {
+    console.log({
+      contextUser: context.req.user.email,
+      decoratorUser: user,
+    });
+    return await this.authService.auth();
   }
 
   @Mutation(() => Response)

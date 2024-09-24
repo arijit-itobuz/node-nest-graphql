@@ -25,22 +25,28 @@ enum Role {
   USER
 }
 
+enum PrivilegeType {
+  PROFILE_READ
+  PROFILE_READ_WRITE
+}
+
 model User {
-  id               String    @id @default(uuid())
+  id               String      @id @default(uuid())
   firstName        String
   lastName         String
-  email            String    @unique
+  email            String      @unique
   dob              String
   phoneNumber      String
   passwordHash     String
-  role             Role      @default(USER)
-  verified         Boolean   @default(false)
-  active           Boolean   @default(true)
-  mfa              Boolean   @default(false)
-  failedLoginCount Int       @default(0)
+  role             Role        @default(USER)
+  verified         Boolean     @default(false)
+  active           Boolean     @default(true)
+  mfa              Boolean     @default(false)
+  failedLoginCount Int         @default(0)
   accountLockedAt  DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  privileges       Privilege[] // Multiple privilege IDs will be linked here
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 
   @@map("user")
 }
@@ -55,4 +61,15 @@ model Token {
 
   @@unique([email, token])
   @@map("token")
+}
+
+model Privilege {
+  id          String        @id @default(uuid())
+  name        PrivilegeType @unique
+  description String
+  users       User[] // Required by Prisma for implicit many-to-many
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("privilege")
 }

@@ -29,6 +29,34 @@ export class AuthService {
     private readonly mailService: MailService
   ) {}
 
+  async auth() {
+    // await this.prisma.user.update({
+    //   where: { email: 'arijit+1@itobuz.com' },
+    //   data: {
+    //     privileges: {
+    //       connect: [{ name: PrivilegeType.PROFILE_READ }, { name: PrivilegeType.PROFILE_READ_WRITE }],
+    //     },
+    //   },
+    // });
+
+    // await this.prisma.user.update({
+    //   where: { email: 'arijit+1@itobuz.com' },
+    //   data: {
+    //     privileges: {
+    //       disconnect: [{ name: PrivilegeType.PROFILE_READ }],
+    //     },
+    //   },
+    // });
+
+    // const userWithPrivileges = await this.prisma.user.findUnique({
+    //   where: { email: 'arijit+1@itobuz.com' },
+    //   include: { privileges: true },
+    // });
+
+    // console.log('userWithPrivileges', userWithPrivileges);
+    return 'auth';
+  }
+
   async signUp(signUpInput: SignUpInput): Promise<Response> {
     try {
       const user = await this.prisma.user.findUnique({
