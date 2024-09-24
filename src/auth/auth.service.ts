@@ -20,6 +20,7 @@ import { Exception } from 'src/common/error/exception';
 import { SignInMFAInput } from './dto/signInMFA.input';
 import { differenceInMinutes } from 'date-fns';
 import { IJwtPayload } from 'src/common/interface/jwtPayload.interface';
+import { DEFAULT_PRIVILEGE } from './privilege/default.privilege';
 
 @Injectable()
 export class AuthService {
@@ -30,30 +31,6 @@ export class AuthService {
   ) {}
 
   async auth() {
-    // await this.prisma.user.update({
-    //   where: { email: 'arijit+1@itobuz.com' },
-    //   data: {
-    //     privileges: {
-    //       connect: [{ name: PrivilegeType.PROFILE_READ }, { name: PrivilegeType.PROFILE_READ_WRITE }],
-    //     },
-    //   },
-    // });
-
-    // await this.prisma.user.update({
-    //   where: { email: 'arijit+1@itobuz.com' },
-    //   data: {
-    //     privileges: {
-    //       disconnect: [{ name: PrivilegeType.PROFILE_READ }],
-    //     },
-    //   },
-    // });
-
-    // const userWithPrivileges = await this.prisma.user.findUnique({
-    //   where: { email: 'arijit+1@itobuz.com' },
-    //   include: { privileges: true },
-    // });
-
-    // console.log('userWithPrivileges', userWithPrivileges);
     return 'auth';
   }
 
@@ -92,6 +69,9 @@ export class AuthService {
           dob: signUpInput.dob,
           phoneNumber: signUpInput.phoneNumber,
           passwordHash: passwordHash,
+          privileges: {
+            connect: DEFAULT_PRIVILEGE.USER.map((e) => ({ name: e })),
+          },
         },
       });
 
