@@ -13,14 +13,18 @@ import { ResetPasswordInput } from './dto/resetPassword.input';
 import { SignInMFAInput } from './dto/signInMFA.input';
 import { UseGuards } from '@nestjs/common';
 import { JwtGuard } from './guard/jwt.guard';
-import { User } from '../user/decorator/user.decorator';
+import { User } from './decorator/user.decorator';
+import { Roles } from './decorator/roles.decorator';
+import { Role } from '@prisma/client';
+import { RolesGuard } from './guard/roles.guard';
 
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Query(() => String)
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   async auth(@Context() context: any, @User() user: any): Promise<any> {
     console.log({ user });
     return 'auth';

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { GraphQLError } from 'graphql';
-import * as httpStatus from 'http-status';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Exception } from 'src/common/error/exception';
 import { IJwtPayload } from 'src/common/interface/jwtInterface.payload';
@@ -26,16 +25,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       });
 
       if (!user) {
-        throw new GraphQLError('FORBIDDEN', {
-          extensions: {
-            code: httpStatus.FORBIDDEN,
-          },
-        });
+        throw new GraphQLError('Forbidden user');
       }
 
       return user; // this goes into req.user
     } catch (error) {
-      Exception(error, 'JwtStrategy validate failed');
+      Exception(error, 'JwtStrategy validate error');
     }
   }
 }
