@@ -4,10 +4,35 @@ import { UpdatePrivilegesInput } from './dto/updatePrivileges.input';
 import { Exception } from 'src/common/error/exception';
 import { UpdatePrivilegesOutput } from './dto/updatePrivileges.output';
 import { GraphQLError } from 'graphql';
+import { GetPrivilegesInput } from './dto/getPrivileges.input';
+import { GetPrivilegesOutput } from './dto/getPrivileges.output';
 
 @Injectable()
 export class PrivilegeService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async getPrivileges(getPrivilegesInput: GetPrivilegesInput): Promise<GetPrivilegesOutput> {
+    try {
+      const response = await this.prisma.user.findUnique({
+        where: { email: getPrivilegesInput.email },
+        select: {
+          id: true,
+          email: true,
+          privileges: { select: { name: true } },
+        },
+      });
+
+      return {
+        success: true,
+        message: 'Privileges get success',
+        id: response.id,
+        email: response.email,
+        privileges: response.privileges.map((e) => e.name),
+      };
+    } catch (error) {
+      Exception(error, 'Failed to get privileges');
+    }
+  }
 
   async updatePrivileges(updatePrivilegesInput: UpdatePrivilegesInput): Promise<UpdatePrivilegesOutput> {
     try {
@@ -15,15 +40,15 @@ export class PrivilegeService {
         throw new GraphQLError('No privileges to update');
       }
 
-      const _disconnect = updatePrivilegesInput.removed.map((e) => ({ name: e }));
       const _connect = updatePrivilegesInput.added.map((e) => ({ name: e }));
+      const _disconnect = updatePrivilegesInput.removed.map((e) => ({ name: e }));
 
       const response = await this.prisma.user.update({
         where: { email: updatePrivilegesInput.email },
         data: {
           privileges: {
-            disconnect: _disconnect,
             connect: _connect,
+            disconnect: _disconnect,
           },
         },
         include: {

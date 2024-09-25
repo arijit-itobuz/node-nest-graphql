@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PrivilegeService } from './privilege.service';
 import { UpdatePrivilegesOutput } from './dto/updatePrivileges.output';
 import { UpdatePrivilegesInput } from './dto/updatePrivileges.input';
@@ -9,10 +9,22 @@ import { PrivilegesGuard } from 'src/privilege/guard/privileges.guard';
 import { Roles } from 'src/role/decorator/roles.decorator';
 import { PrivilegeType, Role } from '@prisma/client';
 import { Privileges } from 'src/privilege/decorator/privileges.decorator';
+import { GetPrivilegesInput } from './dto/getPrivileges.input';
+import { GetPrivilegesOutput } from './dto/getPrivileges.output';
 
 @Resolver()
 export class PrivilegeResolver {
   constructor(private readonly privilegeService: PrivilegeService) {}
+
+  @Query(() => GetPrivilegesOutput)
+  @UseGuards(JwtGuard, RolesGuard, PrivilegesGuard)
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @Privileges(PrivilegeType.PRIVILEGE_READ)
+  async getPrivileges(
+    @Args('getPrivilegesInput') getPrivilegesInput: GetPrivilegesInput
+  ): Promise<GetPrivilegesOutput> {
+    return await this.privilegeService.getPrivileges(getPrivilegesInput);
+  }
 
   @Mutation(() => UpdatePrivilegesOutput)
   @UseGuards(JwtGuard, RolesGuard, PrivilegesGuard)

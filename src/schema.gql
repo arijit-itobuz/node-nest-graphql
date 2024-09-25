@@ -6,6 +6,19 @@ input ForgotPasswordInput {
   email: String!
 }
 
+input GetPrivilegesInput {
+  email: String!
+}
+
+type GetPrivilegesOutput {
+  email: String!
+  environment: String!
+  id: String!
+  message: String!
+  privileges: [String!]!
+  success: Boolean!
+}
+
 type Mutation {
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): Response!
   refreshToken(refreshTokenInput: RefreshTokenInput!): RefreshTokenOutput!
@@ -20,6 +33,7 @@ type Mutation {
 
 type Query {
   auth: String!
+  getPrivileges(getPrivilegesInput: GetPrivilegesInput!): GetPrivilegesOutput!
 }
 
 input RefreshTokenInput {
