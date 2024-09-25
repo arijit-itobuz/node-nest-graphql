@@ -1,25 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { SignUpInput } from './dto/signUp.input';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { GraphQLError } from 'graphql';
 import { JwtService } from '@nestjs/jwt';
 import * as bcryptjs from 'bcryptjs';
-import { Response } from 'src/common/dto/response.output';
-import { config } from 'src/config/config';
-import { MailService } from 'src/mail/mail.service';
 import { TokenType } from '@prisma/client';
+import { differenceInMinutes } from 'date-fns';
+
+import { MailService } from 'src/mail/mail.service';
+import { Response } from 'src/common/dto/response.output';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { config } from 'src/config/config';
+import { Exception } from 'src/common/error/exception';
+import { IJwtPayload } from 'src/common/interface/jwtPayload.interface';
+
 import { VerifyInput } from './dto/verify.input';
 import { VerifyLinkInput } from './dto/verifyLink.input';
 import { SignInInput } from './dto/signIn.input';
 import { SignInOutput } from './dto/signIn.output';
-import { RefreshTokenInput } from './dto/refreshToken.input';
 import { RefreshTokenOutput } from './dto/refreshToken.output';
 import { ForgotPasswordInput } from './dto/forgetPassword.input';
 import { ResetPasswordInput } from './dto/resetPassword.input';
-import { Exception } from 'src/common/error/exception';
+import { RefreshTokenInput } from './dto/refreshToken.input';
 import { SignInMFAInput } from './dto/signInMFA.input';
-import { differenceInMinutes } from 'date-fns';
-import { IJwtPayload } from 'src/common/interface/jwtPayload.interface';
+import { SignUpInput } from './dto/signUp.input';
 import { DEFAULT_PRIVILEGE } from '../privilege/constants/default.privilege';
 
 @Injectable()

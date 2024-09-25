@@ -2,6 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PrivilegeType, Role } from '@prisma/client';
 import { GraphQLError } from 'graphql';
+
 import { Exception } from 'src/common/error/exception';
 import { IUserWithPrivileges } from 'src/common/interface/userWithPrivileges.interface';
 

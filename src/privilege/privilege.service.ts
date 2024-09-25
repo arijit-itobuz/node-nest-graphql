@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { UpdatePrivilegesInput } from './dto/updatePrivileges.input';
-import { Exception } from 'src/common/error/exception';
-import { UpdatePrivilegesOutput } from './dto/updatePrivileges.output';
 import { GraphQLError } from 'graphql';
+
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Exception } from 'src/common/error/exception';
+
+import { UpdatePrivilegesInput } from './dto/updatePrivileges.input';
+import { UpdatePrivilegesOutput } from './dto/updatePrivileges.output';
 import { GetPrivilegesInput } from './dto/getPrivileges.input';
 import { GetPrivilegesOutput } from './dto/getPrivileges.output';
 
