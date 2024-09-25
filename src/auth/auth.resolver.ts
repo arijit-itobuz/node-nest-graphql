@@ -13,12 +13,13 @@ import { ResetPasswordInput } from './dto/resetPassword.input';
 import { SignInMFAInput } from './dto/signInMFA.input';
 import { UseGuards } from '@nestjs/common';
 import { JwtGuard } from './guard/jwt.guard';
-import { GetUser } from './decorator/getUser.decorator';
-import { Roles } from './decorator/roles.decorator';
-import { PrivilegeType, Role, User } from '@prisma/client';
-import { RolesGuard } from './guard/roles.guard';
-import { PrivilegesGuard } from './guard/privileges.guard';
-import { Privileges } from './decorator/privileges.decorator';
+import { GetUserWithPrivilege } from './decorator/getUserWithPrivilege.decorator';
+import { Roles } from '../role/decorator/roles.decorator';
+import { PrivilegeType, Role } from '@prisma/client';
+import { RolesGuard } from '../role/guard/roles.guard';
+import { PrivilegesGuard } from '../privilege/guard/privileges.guard';
+import { Privileges } from '../privilege/decorator/privileges.decorator';
+import { IUserWithPrivileges } from 'src/common/interface/userWithPrivileges.interface';
 
 @Resolver()
 export class AuthResolver {
@@ -28,7 +29,7 @@ export class AuthResolver {
   @UseGuards(JwtGuard, RolesGuard, PrivilegesGuard)
   @Roles(Role.USER)
   @Privileges(PrivilegeType.PROFILE_READ)
-  async auth(@Context() context: any, @GetUser() user: User): Promise<any> {
+  async auth(@Context() context: any, @GetUserWithPrivilege() user: IUserWithPrivileges): Promise<any> {
     console.log({
       contextUser: context.req.user.email,
       decoratorUser: user,

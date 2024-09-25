@@ -1,8 +1,9 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Role, User } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { GraphQLError } from 'graphql';
 import { Exception } from 'src/common/error/exception';
+import { IUserWithPrivileges } from 'src/common/interface/userWithPrivileges.interface';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -16,7 +17,7 @@ export class RolesGuard implements CanActivate {
         throw new GraphQLError('Forbidden role type');
       }
 
-      const user: User = context.getArgByIndex(2).req.user;
+      const user: IUserWithPrivileges = context.getArgByIndex(2).req.user;
 
       if (user && roles.includes(user.role)) {
         return true;

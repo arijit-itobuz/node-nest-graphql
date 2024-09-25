@@ -5,6 +5,7 @@ import * as path from 'node:path';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { PrivilegeModule } from './privilege/privilege.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
     }),
     AuthModule,
     UserModule,
+    PrivilegeModule,
   ],
   controllers: [],
   providers: [],

@@ -13,6 +13,7 @@ type Mutation {
   signIn(signInInput: SignInInput!): SignInOutput!
   signInMFA(signInMFAInput: SignInMFAInput!): SignInOutput!
   signUp(signUpInput: SignUpInput!): Response!
+  updatePrivilege(updatePrivilegeInput: UpdatePrivilegeInput!): UpdatePrivilegeOutput!
   verify(verifyInput: VerifyInput!): Response!
   verifyLink(verifyLinkInput: VerifyLinkInput!): Response!
 }
@@ -71,6 +72,18 @@ input SignUpInput {
   lastName: String!
   password: String!
   phoneNumber: String!
+}
+
+input UpdatePrivilegeInput {
+  added: [String!]!
+  removed: [String!]!
+}
+
+type UpdatePrivilegeOutput {
+  environment: String!
+  message: String!
+  privileges: [String!]!
+  success: Boolean!
 }
 
 input VerifyInput {
