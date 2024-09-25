@@ -41,7 +41,7 @@ export class AuthService {
       });
 
       if (user) {
-        throw new GraphQLError('Email already in use');
+        throw new GraphQLError('Email already in use, contact support');
       }
 
       const verifyToken = this.jwtService.sign(
