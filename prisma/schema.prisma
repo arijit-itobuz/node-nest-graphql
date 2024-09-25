@@ -28,6 +28,7 @@ enum Role {
 enum PrivilegeType {
   PROFILE_READ
   PROFILE_READ_WRITE
+
   PRIVILEGE_READ
   PRIVILEGE_READ_WRITE
 }

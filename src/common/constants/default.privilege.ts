@@ -6,6 +6,7 @@ export const DEFAULT_PRIVILEGE = {
   SUPER_ADMIN: [
     PrivilegeType.PROFILE_READ,
     PrivilegeType.PROFILE_READ_WRITE,
+
     PrivilegeType.PRIVILEGE_READ,
     PrivilegeType.PRIVILEGE_READ_WRITE,
   ],

@@ -1,30 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UpdatePrivilegeInput } from './dto/updatePrivilege.input';
+import { UpdatePrivilegesInput } from './dto/updatePrivileges.input';
 import { Exception } from 'src/common/error/exception';
-import { UpdatePrivilegeOutput } from './dto/updatePrivilege.output';
+import { UpdatePrivilegesOutput } from './dto/updatePrivileges.output';
 import { GraphQLError } from 'graphql';
-import { IUserWithPrivileges } from 'src/common/interface/userWithPrivileges.interface';
 
 @Injectable()
 export class PrivilegeService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async updatePrivilege(
-    user: IUserWithPrivileges,
-    updatePrivilegeInput: UpdatePrivilegeInput
-  ): Promise<UpdatePrivilegeOutput> {
+  async updatePrivileges(updatePrivilegesInput: UpdatePrivilegesInput): Promise<UpdatePrivilegesOutput> {
     try {
-      if (!updatePrivilegeInput.added.length && !updatePrivilegeInput.removed.length) {
+      if (!updatePrivilegesInput.added.length && !updatePrivilegesInput.removed.length) {
         throw new GraphQLError('No privileges to update');
       }
 
+      const _disconnect = updatePrivilegesInput.removed.map((e) => ({ name: e }));
+      const _connect = updatePrivilegesInput.added.map((e) => ({ name: e }));
+
       const response = await this.prisma.user.update({
-        where: { email: user.email },
+        where: { email: updatePrivilegesInput.email },
         data: {
           privileges: {
-            disconnect: updatePrivilegeInput.removed.map((e) => ({ name: e })),
-            connect: updatePrivilegeInput.added.map((e) => ({ name: e })),
+            disconnect: _disconnect,
+            connect: _connect,
           },
         },
         include: {
@@ -34,8 +33,14 @@ export class PrivilegeService {
         },
       });
 
-      return { message: 'Privileges updated', success: true, privileges: response.privileges.map((e) => e.name) };
+      return {
+        success: true,
+        message: 'Privileges updated',
+        email: updatePrivilegesInput.email,
+        privileges: response.privileges.map((e) => e.name),
+      };
     } catch (error) {
+      console.log(error);
       Exception(error, 'Failed to update privileges');
     }
   }

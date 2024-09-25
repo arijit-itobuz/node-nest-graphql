@@ -8,7 +8,11 @@ async function main() {
     data: [
       { name: PrivilegeType.PROFILE_READ, description: 'profile read only permission' },
       { name: PrivilegeType.PROFILE_READ_WRITE, description: 'profile read and write permission' },
+
+      { name: PrivilegeType.PRIVILEGE_READ, description: 'profile read and write permission' },
+      { name: PrivilegeType.PRIVILEGE_READ_WRITE, description: 'profile read and write permission' },
     ],
+    skipDuplicates: true,
   });
 }
 

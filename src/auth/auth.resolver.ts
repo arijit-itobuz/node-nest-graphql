@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { SignUpInput } from './dto/signUp.input';
 import { Response } from 'src/common/dto/response.output';
@@ -11,29 +11,13 @@ import { ForgotPasswordInput } from './dto/forgetPassword.input';
 import { VerifyLinkInput } from './dto/verifyLink.input';
 import { ResetPasswordInput } from './dto/resetPassword.input';
 import { SignInMFAInput } from './dto/signInMFA.input';
-import { UseGuards } from '@nestjs/common';
-import { JwtGuard } from './guard/jwt.guard';
-import { GetUserWithPrivilege } from './decorator/getUserWithPrivilege.decorator';
-import { Roles } from '../role/decorator/roles.decorator';
-import { PrivilegeType, Role } from '@prisma/client';
-import { RolesGuard } from '../role/guard/roles.guard';
-import { PrivilegesGuard } from '../privilege/guard/privileges.guard';
-import { Privileges } from '../privilege/decorator/privileges.decorator';
-import { IUserWithPrivileges } from 'src/common/interface/userWithPrivileges.interface';
 
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Query(() => String)
-  @UseGuards(JwtGuard, RolesGuard, PrivilegesGuard)
-  @Roles(Role.USER)
-  @Privileges(PrivilegeType.PROFILE_READ)
-  async auth(@Context() context: any, @GetUserWithPrivilege() user: IUserWithPrivileges): Promise<any> {
-    console.log({
-      contextUser: context.req.user.email,
-      decoratorUser: user,
-    });
+  async auth(): Promise<any> {
     return await this.authService.auth();
   }
 

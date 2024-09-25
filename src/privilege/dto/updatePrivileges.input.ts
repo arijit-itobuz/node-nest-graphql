@@ -1,8 +1,14 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { PrivilegeType } from '@prisma/client';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
 @InputType()
-export class UpdatePrivilegeInput {
+export class UpdatePrivilegesInput {
+  @IsNotEmpty()
+  @IsEmail()
+  @Field(() => String)
+  email: string;
+
   @Field(() => [String])
   removed: PrivilegeType[];
 
