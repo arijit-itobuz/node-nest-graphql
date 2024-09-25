@@ -12,12 +12,12 @@ import { config } from 'src/config/config';
 import { Exception } from 'src/common/error/exception';
 import { IJwtPayload } from 'src/common/interface/jwtPayload.interface';
 
+import { ForgotPasswordInput } from './dto/forgetPassword.input';
 import { VerifyInput } from './dto/verify.input';
 import { VerifyLinkInput } from './dto/verifyLink.input';
 import { SignInInput } from './dto/signIn.input';
 import { SignInOutput } from './dto/signIn.output';
 import { RefreshTokenOutput } from './dto/refreshToken.output';
-import { ForgotPasswordInput } from './dto/forgetPassword.input';
 import { ResetPasswordInput } from './dto/resetPassword.input';
 import { RefreshTokenInput } from './dto/refreshToken.input';
 import { SignInMFAInput } from './dto/signInMFA.input';
