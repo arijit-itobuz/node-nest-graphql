@@ -1,19 +1,14 @@
-import { PrismaClient, PrivilegeType } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { privilegeSeed } from './seed/privilege.seed';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('seeding data');
-  await prisma.privilege.createMany({
-    data: [
-      { name: PrivilegeType.PROFILE_READ, description: 'profile read only permission' },
-      { name: PrivilegeType.PROFILE_READ_WRITE, description: 'profile read and write permission' },
+  console.log('Seeding: start');
 
-      { name: PrivilegeType.PRIVILEGE_READ, description: 'profile read and write permission' },
-      { name: PrivilegeType.PRIVILEGE_READ_WRITE, description: 'profile read and write permission' },
-    ],
-    skipDuplicates: true,
-  });
+  await privilegeSeed(prisma);
+
+  console.log('Seeding: end');
 }
 
 main()
