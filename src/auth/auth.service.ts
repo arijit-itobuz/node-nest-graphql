@@ -20,7 +20,7 @@ import { Exception } from 'src/common/error/exception';
 import { SignInMFAInput } from './dto/signInMFA.input';
 import { differenceInMinutes } from 'date-fns';
 import { IJwtPayload } from 'src/common/interface/jwtPayload.interface';
-import { DEFAULT_PRIVILEGE } from '../common/constants/default.privilege';
+import { DEFAULT_PRIVILEGE } from '../privilege/constants/default.privilege';
 
 @Injectable()
 export class AuthService {
