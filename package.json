@@ -11,7 +11,7 @@
     "compile": "pkg dist/main.js/index.js -o myapp -t latest-linux-x64",
     "format": "prettier '{src,test,prisma}/**/*.ts' --write",
     "lint": "eslint '{src,test,prisma}/**/*.ts' --fix",
-    "seed": "tsx prisma/seed.ts",
+    "seed": "tsx ./prisma/seed.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
