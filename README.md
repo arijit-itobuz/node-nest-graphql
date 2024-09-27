@@ -23,3 +23,14 @@
 # Nest - usefull links
 
 - https://stackoverflow.com/questions/74548546/what-is-the-difference-between-inputtype-and-objecttype-in-nestjs
+
+# Build
+
+## SWC
+
+- @swc/cli
+- @swc/core
+
+## NCC
+
+- @vercel/ncc
