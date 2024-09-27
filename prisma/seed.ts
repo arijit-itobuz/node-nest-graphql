@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+
 import { privilegeSeed } from './seed/01_privilege.seed';
 import { superAdminSeed } from './seed/02_superAdmin.seed';
 import { adminSeed } from './seed/03_admin.seed';
