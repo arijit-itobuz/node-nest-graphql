@@ -1,18 +1,21 @@
 {
   "$schema": "https://swc.rs/schema.json",
   "sourceMaps": false,
-  "minify": false,
+  "minify": true,
   "jsc": {
-    "baseUrl": "./",
-    "target": "es2020",
+    "externalHelpers": true,
     "parser": {
       "syntax": "typescript",
+      "tsx": false,
       "decorators": true,
       "dynamicImport": true
     },
+    "target": "esnext",
+    "loose": false,
     "transform": {
       "legacyDecorator": true,
       "decoratorMetadata": true
-    }
+    },
+    "baseUrl": "./"
   }
 }
