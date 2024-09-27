@@ -23,7 +23,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js', '/*.js', '/*.mjs'],
+  ignorePatterns: ['.eslintrc.js', '/**/*.js', '/**/*.mjs'],
   rules: {
     'no-unused-vars': 'off',
     '@typescript-eslint/interface-name-prefix': 'off',
