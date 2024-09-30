@@ -1,10 +1,11 @@
 {
   "name": "node-nest-graphql",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "private": true,
+  "version": "1.0.0",
   "license": "UNLICENSED",
+  "type": "commonjs",
+  "private": true,
+  "author": "Arijit Das <arijit@itobuz.com>",
+  "description": "",
   "scripts": {
     "build:nest": "nest build",
     "build:swc": "rm -rf ./dist && swc ./src -d ./dist --strip-leading-paths",
