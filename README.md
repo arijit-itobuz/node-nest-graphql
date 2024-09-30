@@ -26,7 +26,7 @@
 
 ---
 
-# Build
+# Build & Bundling
 
 ### SWC
 
@@ -58,6 +58,25 @@
 - build > bundling > ./node_modules/.prisma/client/<os_specific_node_files>
 - After building and bundling you code, you need to have the .node files which are platform independent files which prisma requires to run.
 - Copy those files and put it in the root directory where you root.js file is generated, in this case the file is index.js.
+
+---
+
+# Packaging
+
+##### Dependencies
+
+- pkg
+
+##### Info
+
+- Using pkg, we are targeting the following architectures and os ->
+  macos-arm64
+  macos-x64
+  win-x64
+  linux-x64
+  linux-arm64"
+
+- Note current prisma binaryTargets does not support windows arm64, so we are not packaging for windows on arm
 
 ---
 
