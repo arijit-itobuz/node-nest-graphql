@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLError } from 'graphql';
-import * as nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 
 import { config } from 'src/config/config';
 

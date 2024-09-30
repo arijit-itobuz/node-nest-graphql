@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLError } from 'graphql';
 import { JwtService } from '@nestjs/jwt';
-import * as bcryptjs from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
 import { TokenType } from '@prisma/client';
 import { differenceInMinutes } from 'date-fns';
 

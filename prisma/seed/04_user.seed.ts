@@ -1,5 +1,5 @@
 import { PrismaClient, Role } from '@prisma/client';
-import * as bcryptjs from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
 
 import { config } from 'src/config/config';
 import { DEFAULT_PRIVILEGE } from 'src/privilege/constants/default.privilege';
