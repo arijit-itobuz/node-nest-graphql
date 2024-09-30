@@ -1,14 +1,22 @@
 # App
 
+##### Stack
+
 - node
 - nest
 - graphql
 - prisma
 - postgres
 
----
+##### Initial Setup
+
+- docker compose up --build -d
+- npm i
+- npm run start:dev
 
 # Nest
+
+##### Nest useful commands
 
 - nest g module <module_name>
 - nest g resource <resource_name>
@@ -18,6 +26,8 @@
 ---
 
 # Prisma
+
+##### Prisma useful commands
 
 - npx prisma generate
 - npx prisma migrate dev --name <migration_name>
