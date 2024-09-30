@@ -54,7 +54,7 @@
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
-    "@swc/cli": "^0.4.0",
+    "pkgcli": "^0.4.0",
     "@swc/core": "^1.7.28",
     "@swc/helpers": "^0.5.13",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
