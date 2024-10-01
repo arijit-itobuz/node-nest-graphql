@@ -1,6 +1,7 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import type { ExecutionContext } from '@nestjs/common';
+import { createParamDecorator } from '@nestjs/common';
 
-import { IUserWithPrivileges } from 'src/common/interface/userWithPrivileges.interface';
+import type { IUserWithPrivileges } from 'src/common/interface/userWithPrivileges.interface';
 
 export const GetUserWithPrivilege = createParamDecorator(
   (data: unknown, context: ExecutionContext): IUserWithPrivileges => {

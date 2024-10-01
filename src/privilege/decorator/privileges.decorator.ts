@@ -1,6 +1,7 @@
+import type { CustomDecorator } from '@nestjs/common';
 import { SetMetadata } from '@nestjs/common';
-import { PrivilegeType } from '@prisma/client';
+import type { PrivilegeType } from '@prisma/client';
 
-export const Privileges = (...privileges: PrivilegeType[]) => {
+export const Privileges = (...privileges: PrivilegeType[]): CustomDecorator<string> => {
   return SetMetadata('privileges', privileges);
 };

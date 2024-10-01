@@ -6,7 +6,7 @@ import { config } from 'src/config/config';
 
 @Injectable()
 export class MailService {
-  async send_email(subject: string, html: string, to_email: string) {
+  async send_email(subject: string, html: string, to_email: string): Promise<void> {
     try {
       const mail_transport = nodemailer.createTransport({
         host: config.smtp.host,

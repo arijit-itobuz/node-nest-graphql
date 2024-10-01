@@ -32,7 +32,7 @@ export class AuthService {
     private readonly mailService: MailService
   ) {}
 
-  async auth() {
+  async auth(): Promise<string> {
     return 'auth';
   }
 

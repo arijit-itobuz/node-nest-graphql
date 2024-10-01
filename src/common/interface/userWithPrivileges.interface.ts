@@ -1,4 +1,4 @@
-import { PrivilegeType, User } from '@prisma/client';
+import type { PrivilegeType, User } from '@prisma/client';
 
 export interface IUserWithPrivileges extends User {
   privileges: {

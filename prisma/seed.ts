@@ -7,7 +7,7 @@ import { userSeed } from './seed/04_user.seed';
 
 const prisma = new PrismaClient();
 
-async function main() {
+async function main(): Promise<void> {
   console.log('Seeding: start');
 
   await privilegeSeed(prisma);

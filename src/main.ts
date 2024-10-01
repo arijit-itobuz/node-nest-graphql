@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 import { config } from './config/config';
 // import { GlobalExceptionFilter } from './common/error/globalException.filter';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     credentials: true,

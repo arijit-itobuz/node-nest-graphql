@@ -1,6 +1,7 @@
-import { PrismaClient, PrivilegeType } from '@prisma/client';
+import type { PrismaClient } from '@prisma/client';
+import { PrivilegeType } from '@prisma/client';
 
-export async function privilegeSeed(prisma: PrismaClient) {
+export async function privilegeSeed(prisma: PrismaClient): Promise<void> {
   console.log('\nprivilegeSeed: start');
   await prisma.privilege.createMany({
     data: [

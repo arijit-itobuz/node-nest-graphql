@@ -5,6 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { Exception } from 'src/common/error/exception';
 import { IJwtPayload } from 'src/common/interface/jwtPayload.interface';
+import { IUserWithPrivileges } from 'src/common/interface/userWithPrivileges.interface';
 import { config } from 'src/config/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -18,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: IJwtPayload) {
+  async validate(payload: IJwtPayload): Promise<IUserWithPrivileges> {
     try {
       const email = payload.email;
       const user = await this.prisma.user.findUnique({

@@ -1,10 +1,11 @@
-import { PrismaClient, Role } from '@prisma/client';
+import type { PrismaClient } from '@prisma/client';
+import { Role } from '@prisma/client';
 import bcryptjs from 'bcryptjs';
 
 import { config } from 'src/config/config';
 import { DEFAULT_PRIVILEGE } from 'src/privilege/constants/default.privilege';
 
-export async function superAdminSeed(prisma: PrismaClient) {
+export async function superAdminSeed(prisma: PrismaClient): Promise<void> {
   try {
     console.log('\nsuperAdminSeed: start');
 
