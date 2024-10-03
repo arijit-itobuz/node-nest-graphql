@@ -116,7 +116,7 @@ export class AuthService {
 
       return { success: true, message: 'Verification link sent, proceed to verification' };
     } catch (error) {
-      Exception(error, 'Faield to send verification mail');
+      Exception(error, 'Failed to send verification mail');
     }
   }
 
