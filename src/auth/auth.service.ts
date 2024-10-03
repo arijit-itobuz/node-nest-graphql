@@ -101,7 +101,7 @@ export class AuthService {
 
       const verifyToken = this.jwtService.sign(
         { email: verifyLinkInput.email },
-        { expiresIn: config.auth.verifyTokenExpiryTimeInMins, secret: config.jwt.verify_token_secret }
+        { expiresIn: `${config.auth.verifyTokenExpiryTime}m`, secret: config.jwt.verify_token_secret }
       );
 
       await this.mailService.send_email('User Verification Link', `token: ${verifyToken}`, verifyLinkInput.email);
@@ -136,7 +136,7 @@ export class AuthService {
         throw new GraphQLError('Invalid Token');
       }
 
-      if (differenceInMinutes(new Date(), verifyToken.createdAt) > config.auth.verifyTokenExpiryNumber) {
+      if (differenceInMinutes(new Date(), verifyToken.createdAt) > config.auth.verifyTokenExpiryTime) {
         throw new GraphQLError('Token Expired');
       }
 
@@ -173,7 +173,7 @@ export class AuthService {
         try {
           const verifyToken = this.jwtService.sign(
             { email: signInInput.email },
-            { expiresIn: config.auth.verifyTokenExpiryTimeInMins, secret: config.jwt.verify_token_secret }
+            { expiresIn: `${config.auth.verifyTokenExpiryTime}m`, secret: config.jwt.verify_token_secret }
           );
 
           await this.mailService.send_email('User Verification Link', `token: ${verifyToken}`, signInInput.email);
@@ -237,12 +237,12 @@ export class AuthService {
 
       const accessToken = this.jwtService.sign(
         { email: signInInput.email },
-        { expiresIn: config.auth.accessTokenExpiryTimeInHrs, secret: config.jwt.access_token_secret }
+        { expiresIn: `${config.auth.accessTokenExpiryTime}h`, secret: config.jwt.access_token_secret }
       );
 
       const refreshToken = this.jwtService.sign(
         { email: signInInput.email },
-        { expiresIn: config.auth.refreshTokenExpiryTimeInDays, secret: config.jwt.refresh_token_secret }
+        { expiresIn: `${config.auth.refreshTokenExpiryTime}d`, secret: config.jwt.refresh_token_secret }
       );
 
       return {
@@ -304,7 +304,7 @@ export class AuthService {
         throw new GraphQLError('Invalid MFA token, try again');
       }
 
-      if (differenceInMinutes(new Date(), mfaToken.createdAt) > config.auth.mfaTokenExpiryNumber) {
+      if (differenceInMinutes(new Date(), mfaToken.createdAt) > config.auth.mfaTokenExpiryTime) {
         return {
           success: false,
           message: 'Token Expired',
@@ -317,12 +317,12 @@ export class AuthService {
 
       const accessToken = this.jwtService.sign(
         { email: signInMFAInput.email },
-        { expiresIn: config.auth.accessTokenExpiryTimeInHrs, secret: config.jwt.access_token_secret }
+        { expiresIn: `${config.auth.accessTokenExpiryTime}h`, secret: config.jwt.access_token_secret }
       );
 
       const refreshToken = this.jwtService.sign(
         { email: signInMFAInput.email },
-        { expiresIn: config.auth.refreshTokenExpiryTimeInDays, secret: config.jwt.refresh_token_secret }
+        { expiresIn: `${config.auth.refreshTokenExpiryTime}d`, secret: config.jwt.refresh_token_secret }
       );
 
       await this.prisma.token.delete({
@@ -368,11 +368,11 @@ export class AuthService {
 
       const accessToken = this.jwtService.sign(
         { email: email },
-        { expiresIn: config.auth.accessTokenExpiryTimeInHrs, secret: config.jwt.access_token_secret }
+        { expiresIn: `${config.auth.accessTokenExpiryTime}h`, secret: config.jwt.access_token_secret }
       );
       const refreshToken = this.jwtService.sign(
         { email: email },
-        { expiresIn: config.auth.refreshTokenExpiryTimeInDays, secret: config.jwt.refresh_token_secret }
+        { expiresIn: `${config.auth.refreshTokenExpiryTime}d`, secret: config.jwt.refresh_token_secret }
       );
 
       return { success: true, message: 'Refresh and Access tokens generated', accessToken, refreshToken };
@@ -393,7 +393,7 @@ export class AuthService {
 
       const forgetPasswordToken = this.jwtService.sign(
         { email: forgotPasswordInput.email },
-        { expiresIn: config.auth.forgotPasswordTokenExpiryTimeInMins, secret: config.jwt.forgot_password_token_secret }
+        { expiresIn: `${config.auth.forgotPasswordTokenExpiryTime}m`, secret: config.jwt.forgot_password_token_secret }
       );
 
       await this.mailService.send_email(
@@ -432,9 +432,7 @@ export class AuthService {
         throw new GraphQLError('Invalid Token');
       }
 
-      if (
-        differenceInMinutes(new Date(), forgotPasswordToken.createdAt) > config.auth.forgotPasswordTokenExpiryNumber
-      ) {
+      if (differenceInMinutes(new Date(), forgotPasswordToken.createdAt) > config.auth.forgotPasswordTokenExpiryTime) {
         throw new GraphQLError('Token Expired');
       }
 

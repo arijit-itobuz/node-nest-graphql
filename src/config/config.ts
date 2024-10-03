@@ -33,13 +33,10 @@ export const config = {
     failedLoginCount: 5,
     accountLockedTimeInMins: 15,
 
-    mfaTokenExpiryNumber: 10,
-    verifyTokenExpiryNumber: 10,
-    forgotPasswordTokenExpiryNumber: 10,
-
-    verifyTokenExpiryTimeInMins: '10m',
-    forgotPasswordTokenExpiryTimeInMins: '10m',
-    accessTokenExpiryTimeInHrs: '1h',
-    refreshTokenExpiryTimeInDays: '30d',
+    mfaTokenExpiryTime: 10, // in mins
+    verifyTokenExpiryTime: 10, // in mins
+    forgotPasswordTokenExpiryTime: 10, // in mins
+    accessTokenExpiryTime: 1, // in hrs
+    refreshTokenExpiryTime: 30, // in days
   },
 };
