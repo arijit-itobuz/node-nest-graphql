@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLError } from 'graphql';
 
-import { PrismaService } from 'src/prisma/prisma.service';
-import { Exception } from 'src/common/error/exception';
-
 import { UpdatePrivilegesInput } from './dto/updatePrivileges.input';
 import { UpdatePrivilegesOutput } from './dto/updatePrivileges.output';
 import { GetPrivilegesInput } from './dto/getPrivileges.input';
 import { GetPrivilegesOutput } from './dto/getPrivileges.output';
+import { PrismaService } from '../prisma/prisma.service';
+import { Exception } from '../common/error/exception';
 
 @Injectable()
 export class PrivilegeService {

@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AppResponse {
+  environment: String!
+  message: String!
+  success: Boolean!
+}
+
 input ForgotPasswordInput {
   email: String!
 }
@@ -27,15 +33,15 @@ type GetProfileOutput {
 }
 
 type Mutation {
-  forgotPassword(forgotPasswordInput: ForgotPasswordInput!): Response!
+  forgotPassword(forgotPasswordInput: ForgotPasswordInput!): AppResponse!
   refreshToken(refreshTokenInput: RefreshTokenInput!): RefreshTokenOutput!
-  resetPassword(resetPasswordInput: ResetPasswordInput!): Response!
+  resetPassword(resetPasswordInput: ResetPasswordInput!): AppResponse!
   signIn(signInInput: SignInInput!): SignInOutput!
   signInMFA(signInMFAInput: SignInMFAInput!): SignInOutput!
-  signUp(signUpInput: SignUpInput!): Response!
+  signUp(signUpInput: SignUpInput!): AppResponse!
   updatePrivileges(updatePrivilegeInput: UpdatePrivilegesInput!): UpdatePrivilegesOutput!
-  verify(verifyInput: VerifyInput!): Response!
-  verifyLink(verifyLinkInput: VerifyLinkInput!): Response!
+  verify(verifyInput: VerifyInput!): AppResponse!
+  verifyLink(verifyLinkInput: VerifyLinkInput!): AppResponse!
 }
 
 type Profile {
@@ -71,12 +77,6 @@ type RefreshTokenOutput {
 input ResetPasswordInput {
   newPassword: String!
   token: String!
-}
-
-type Response {
-  environment: String!
-  message: String!
-  success: Boolean!
 }
 
 input SignInInput {

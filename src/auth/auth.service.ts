@@ -5,13 +5,6 @@ import bcryptjs from 'bcryptjs';
 import { TokenType } from '@prisma/client';
 import { differenceInMinutes } from 'date-fns';
 
-import { MailService } from 'src/mail/mail.service';
-import { Response } from 'src/common/dto/response.output';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { config } from 'src/config/config';
-import { Exception } from 'src/common/error/exception';
-import { IJwtPayload } from 'src/common/interface/jwtPayload.interface';
-
 import { ForgotPasswordInput } from './dto/forgetPassword.input';
 import { VerifyInput } from './dto/verify.input';
 import { VerifyLinkInput } from './dto/verifyLink.input';
@@ -23,6 +16,12 @@ import { RefreshTokenInput } from './dto/refreshToken.input';
 import { SignInMFAInput } from './dto/signInMFA.input';
 import { SignUpInput } from './dto/signUp.input';
 import { DEFAULT_PRIVILEGE } from '../privilege/constants/default.privilege';
+import { PrismaService } from '../prisma/prisma.service';
+import { MailService } from '../mail/mail.service';
+import { config } from '../config/config';
+import { Exception } from '../common/error/exception';
+import { IJwtPayload } from '../common/interface/jwtPayload.interface';
+import { AppResponse } from '../common/dto/response.output';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +35,7 @@ export class AuthService {
     return 'auth';
   }
 
-  async signUp(signUpInput: SignUpInput): Promise<Response> {
+  async signUp(signUpInput: SignUpInput): Promise<AppResponse> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { email: signUpInput.email },
@@ -83,7 +82,7 @@ export class AuthService {
     }
   }
 
-  async verifyLink(verifyLinkInput: VerifyLinkInput): Promise<Response> {
+  async verifyLink(verifyLinkInput: VerifyLinkInput): Promise<AppResponse> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { email: verifyLinkInput.email },
@@ -120,7 +119,7 @@ export class AuthService {
     }
   }
 
-  async verify(verifyInput: VerifyInput): Promise<Response> {
+  async verify(verifyInput: VerifyInput): Promise<AppResponse> {
     try {
       const decoded: IJwtPayload = this.jwtService.verify(verifyInput.token, {
         secret: config.jwt.verify_token_secret,
@@ -381,7 +380,7 @@ export class AuthService {
     }
   }
 
-  async forgotPassword(forgotPasswordInput: ForgotPasswordInput): Promise<Response> {
+  async forgotPassword(forgotPasswordInput: ForgotPasswordInput): Promise<AppResponse> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { email: forgotPasswordInput.email },
@@ -416,7 +415,7 @@ export class AuthService {
     }
   }
 
-  async resetPassword(resetPasswordInput: ResetPasswordInput): Promise<Response> {
+  async resetPassword(resetPasswordInput: ResetPasswordInput): Promise<AppResponse> {
     try {
       const decoded: IJwtPayload = this.jwtService.verify(resetPasswordInput.token, {
         secret: config.jwt.forgot_password_token_secret,

@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { Response } from 'src/common/dto/response.output';
+import { AppResponse } from '../../common/dto/response.output';
 
 @ObjectType()
-export class UpdatePrivilegesOutput extends Response {
+export class UpdatePrivilegesOutput extends AppResponse {
   @Field(() => String)
   email: string;
 

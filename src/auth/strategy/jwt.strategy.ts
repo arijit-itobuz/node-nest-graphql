@@ -3,11 +3,11 @@ import { PassportStrategy } from '@nestjs/passport';
 import { GraphQLError } from 'graphql';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { Exception } from 'src/common/error/exception';
-import { IJwtPayload } from 'src/common/interface/jwtPayload.interface';
-import { IUserWithPrivileges } from 'src/common/interface/userWithPrivileges.interface';
-import { config } from 'src/config/config';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { config } from '../../config/config';
+import { IJwtPayload } from '../../common/interface/jwtPayload.interface';
+import { IUserWithPrivileges } from '../../common/interface/userWithPrivileges.interface';
+import { Exception } from '../../common/error/exception';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

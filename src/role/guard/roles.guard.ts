@@ -3,8 +3,8 @@ import { Reflector } from '@nestjs/core';
 import { Role } from '@prisma/client';
 import { GraphQLError } from 'graphql';
 
-import { Exception } from 'src/common/error/exception';
-import { IUserWithPrivileges } from 'src/common/interface/userWithPrivileges.interface';
+import { IUserWithPrivileges } from '../../common/interface/userWithPrivileges.interface';
+import { Exception } from '../../common/error/exception';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

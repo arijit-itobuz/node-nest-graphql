@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { config } from 'src/config/config';
+import { config } from '../../config/config';
 
 @ObjectType()
-export class Response {
+export class AppResponse {
   @Field(() => String, { defaultValue: config.app.env })
   environment?: string;
 

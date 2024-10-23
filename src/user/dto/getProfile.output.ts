@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsBoolean, IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
-import { Response } from 'src/common/dto/response.output';
+import { AppResponse } from '../../common/dto/response.output';
 
 @ObjectType()
 class Profile {
@@ -52,7 +52,7 @@ class Profile {
 }
 
 @ObjectType()
-export class GetProfileOutput extends Response {
+export class GetProfileOutput extends AppResponse {
   @Field(() => Profile)
   profile: Profile;
 }

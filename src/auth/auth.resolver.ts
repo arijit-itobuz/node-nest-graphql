@@ -1,7 +1,5 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 
-import { Response } from 'src/common/dto/response.output';
-
 import { AuthService } from './auth.service';
 import { SignUpInput } from './dto/signUp.input';
 import { VerifyInput } from './dto/verify.input';
@@ -13,6 +11,7 @@ import { ForgotPasswordInput } from './dto/forgetPassword.input';
 import { VerifyLinkInput } from './dto/verifyLink.input';
 import { ResetPasswordInput } from './dto/resetPassword.input';
 import { SignInMFAInput } from './dto/signInMFA.input';
+import { AppResponse } from '../common/dto/response.output';
 
 @Resolver()
 export class AuthResolver {
@@ -23,18 +22,18 @@ export class AuthResolver {
     return await this.authService.auth();
   }
 
-  @Mutation(() => Response)
-  async signUp(@Args('signUpInput') signUpInput: SignUpInput): Promise<Response> {
+  @Mutation(() => AppResponse)
+  async signUp(@Args('signUpInput') signUpInput: SignUpInput): Promise<AppResponse> {
     return await this.authService.signUp(signUpInput);
   }
 
-  @Mutation(() => Response)
-  async verifyLink(@Args('verifyLinkInput') verifyLinkInput: VerifyLinkInput): Promise<Response> {
+  @Mutation(() => AppResponse)
+  async verifyLink(@Args('verifyLinkInput') verifyLinkInput: VerifyLinkInput): Promise<AppResponse> {
     return await this.authService.verifyLink(verifyLinkInput);
   }
 
-  @Mutation(() => Response)
-  async verify(@Args('verifyInput') verifyInput: VerifyInput): Promise<Response> {
+  @Mutation(() => AppResponse)
+  async verify(@Args('verifyInput') verifyInput: VerifyInput): Promise<AppResponse> {
     return this.authService.verify(verifyInput);
   }
 
@@ -52,13 +51,13 @@ export class AuthResolver {
     return this.authService.refreshToken(refreshTokenInput);
   }
 
-  @Mutation(() => Response)
-  async forgotPassword(@Args('forgotPasswordInput') forgotPasswordInput: ForgotPasswordInput): Promise<Response> {
+  @Mutation(() => AppResponse)
+  async forgotPassword(@Args('forgotPasswordInput') forgotPasswordInput: ForgotPasswordInput): Promise<AppResponse> {
     return this.authService.forgotPassword(forgotPasswordInput);
   }
 
-  @Mutation(() => Response)
-  async resetPassword(@Args('resetPasswordInput') resetPasswordInput: ResetPasswordInput): Promise<Response> {
+  @Mutation(() => AppResponse)
+  async resetPassword(@Args('resetPasswordInput') resetPasswordInput: ResetPasswordInput): Promise<AppResponse> {
     return this.authService.resetPassword(resetPasswordInput);
   }
 }

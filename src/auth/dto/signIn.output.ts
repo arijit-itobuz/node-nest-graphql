@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
-import { Response } from 'src/common/dto/response.output';
+import { AppResponse } from '../../common/dto/response.output';
 
 @ObjectType()
-export class SignInOutput extends Response {
+export class SignInOutput extends AppResponse {
   @IsNotEmpty()
   @IsBoolean()
   @Field(() => Boolean)

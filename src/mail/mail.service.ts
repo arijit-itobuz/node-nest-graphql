@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLError } from 'graphql';
 import nodemailer from 'nodemailer';
 
-import { config } from 'src/config/config';
+import { config } from '../config/config';
 
 @Injectable()
 export class MailService {

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { Exception } from 'src/common/error/exception';
-import { IUserWithPrivileges } from 'src/common/interface/userWithPrivileges.interface';
-
 import { GetProfileOutput } from './dto/getProfile.output';
+import { IUserWithPrivileges } from '../common/interface/userWithPrivileges.interface';
+import { Exception } from '../common/error/exception';
 
 @Injectable()
 export class UserService {

@@ -2,17 +2,16 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { PrivilegeType, Role } from '@prisma/client';
 
-import { JwtGuard } from 'src/auth/guard/jwt.guard';
-import { RolesGuard } from 'src/role/guard/roles.guard';
-import { PrivilegesGuard } from 'src/privilege/guard/privileges.guard';
-import { Roles } from 'src/role/decorator/roles.decorator';
-import { Privileges } from 'src/privilege/decorator/privileges.decorator';
-
 import { UpdatePrivilegesInput } from './dto/updatePrivileges.input';
 import { UpdatePrivilegesOutput } from './dto/updatePrivileges.output';
 import { PrivilegeService } from './privilege.service';
 import { GetPrivilegesInput } from './dto/getPrivileges.input';
 import { GetPrivilegesOutput } from './dto/getPrivileges.output';
+import { PrivilegesGuard } from './guard/privileges.guard';
+import { RolesGuard } from '../role/guard/roles.guard';
+import { JwtGuard } from '../auth/guard/jwt.guard';
+import { Roles } from '../role/decorator/roles.decorator';
+import { Privileges } from './decorator/privileges.decorator';
 
 @Resolver()
 export class PrivilegeResolver {
