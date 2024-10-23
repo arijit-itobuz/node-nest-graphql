@@ -19,6 +19,13 @@ type GetPrivilegesOutput {
   success: Boolean!
 }
 
+type GetProfileOutput {
+  environment: String!
+  message: String!
+  profile: Profile!
+  success: Boolean!
+}
+
 type Mutation {
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): Response!
   refreshToken(refreshTokenInput: RefreshTokenInput!): RefreshTokenOutput!
@@ -31,9 +38,22 @@ type Mutation {
   verifyLink(verifyLinkInput: VerifyLinkInput!): Response!
 }
 
+type Profile {
+  active: Boolean!
+  dob: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  mfa: Boolean!
+  phoneNumber: String!
+  role: String!
+  verified: Boolean!
+}
+
 type Query {
   auth: String!
   getPrivileges(getPrivilegesInput: GetPrivilegesInput!): GetPrivilegesOutput!
+  getProfile: GetProfileOutput!
 }
 
 input RefreshTokenInput {
