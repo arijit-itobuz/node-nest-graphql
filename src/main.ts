@@ -32,7 +32,7 @@ async function bootstrap(): Promise<void> {
 
   await app.listen(config.app.port);
 
-  console.log(`[graphql]: http://localhost:${config.app.port}/graphql`);
-  console.log(`[rest   ]: http://localhost:${config.app.port}`);
+  console.log(`[graphql]: http://localhost:${config.app.port}/graphql 🚀`);
+  console.log(`[rest   ]: http://localhost:${config.app.port} 🚀`);
 }
 bootstrap();
