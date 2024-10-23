@@ -5,6 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
+import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { PrivilegeModule } from './privilege/privilege.module';
 import { UserModule } from './user/user.module';
@@ -22,7 +23,7 @@ import { UserModule } from './user/user.module';
     PrivilegeModule,
     UserModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}
