@@ -5,8 +5,8 @@
 - node
 - nest
 - graphql
-- prisma
 - postgres
+- prisma
 
 ##### Initial Setup
 
