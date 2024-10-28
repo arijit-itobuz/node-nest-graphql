@@ -11,10 +11,12 @@
 ##### Initial Setup
 
 - npm i
-- docker compose -f ./compose.db.yaml up --build -d
+- docker compose -f ./compose.db.yaml --env-file ./.env up --build -d
 - npx prisma migrate deploy
 - npm run seed
 - npm run start:dev
+
+- dev: docker compose -f ./compose.dev.yaml --env-file ./.env.dev up --build -d
 
 # Nest
 
