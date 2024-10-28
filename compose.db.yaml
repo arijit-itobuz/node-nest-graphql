@@ -1,5 +1,5 @@
 name: compose-node-nest-graphql
-    
+
 services:
   db:
     # pg out container uri     : postgresql://postgres:postgres@localhost:5432/mydb?schema=public

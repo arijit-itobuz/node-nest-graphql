@@ -10,8 +10,8 @@
 
 ##### Initial Setup
 
-- docker compose up --build -d
 - npm i
+- docker compose -f ./compose.db.yaml up --build -d
 - npm run start:dev
 
 # Nest

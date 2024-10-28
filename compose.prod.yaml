@@ -1,0 +1,26 @@
+name: compose-node-nest-graphql
+
+services:
+  postgres:
+    container_name: postgres-container
+    image: postgres:latest
+    restart: on-failure:3
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+    ports:
+      - 5432:5432
+
+  app:
+    container_name: app-container
+    image: app-prod:latest
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.prod
+      no_cache: true
+    restart: on-failure:3
+    depends_on:
+      - postgres
+    ports:
+      - 3500:3500
