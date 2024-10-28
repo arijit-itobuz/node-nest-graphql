@@ -12,6 +12,8 @@
 
 - npm i
 - docker compose -f ./compose.db.yaml up --build -d
+- npx prisma migrate deploy
+- npm run seed
 - npm run start:dev
 
 # Nest
@@ -31,6 +33,7 @@
 
 - npx prisma generate
 - npx prisma migrate dev --name <migration_name>
+- npx prisma migrate deploy
 - npx prisma db push
 - npx prisma studio
 

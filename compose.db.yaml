@@ -1,4 +1,4 @@
-name: compose-node-nest-graphql
+name: compose-db-node-nest-graphql
 
 services:
   db:
