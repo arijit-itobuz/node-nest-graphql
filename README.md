@@ -100,3 +100,10 @@
 - https://stackoverflow.com/questions/74548546/what-is-the-difference-between-inputtype-and-objecttype-in-nestjs
 
 ---
+
+# Dependency Update
+
+- npm outdated
+- npm i <dependency>@latest
+
+---
